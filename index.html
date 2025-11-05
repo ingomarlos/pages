@@ -149,6 +149,7 @@
   <script>
     const animeURL = "https://script.google.com/macros/s/AKfycbxEW-xduE6ZQnzekYwBJA_R_br-Z3R3PjreCcHBjja4xmbPt3jDm-9kwqQKfVcNsMdi/exec";
     const flashcardURL = "https://script.google.com/macros/s/AKfycbzmAvM5-O7iVTL8U8-djFjg8GQP3zriLYY97RjNZFHulerYFhZQu4HfxvlB-VEQqotA/exec";
+    const jp = "https://script.google.com/macros/s/AKfycbx9C-ld0VJGSiEm5rT1KX5_RERdBea3HJIj8PsPPCIwBcjmZw1jw6FzjaaI6y4h9c-e/exec";
 
     document.getElementById("animeBtn").addEventListener("click", () => {
       window.location.assign(animeURL);
@@ -156,6 +157,10 @@
 
     document.getElementById("flashcardBtn").addEventListener("click", () => {
       window.location.assign(flashcardURL);
+    });
+
+        document.getElementById("flashcardBtn").addEventListener("click", () => {
+      window.location.assign(jp);
     });
 
     document.querySelectorAll(".btn").forEach(btn=>{
