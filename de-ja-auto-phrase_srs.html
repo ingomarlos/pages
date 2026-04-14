@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>DE-JA Phrase SRS</title>
 <style>
-  :root { --bg:#0b0b0c; --fg:#f7f7fa; --muted:#9aa0a6; --acc:#4c8bf5; --surface:#151821; --surface-hi:#1f2330; }
+  :root { --bg:#0b0b0c; --fg:#f7f7fa; --muted:#9aa0a6; --acc:#4c8bf5; --surface:#151821; --surface-hi:#1f2330; --ja-size:1.9rem; }
   * { box-sizing:border-box; }
   body { font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
          background:var(--bg); color:var(--fg); margin:0; min-height:100vh;
@@ -25,7 +25,7 @@
             text-align:center; gap:18px; padding:30px; border-radius:8px; background:linear-gradient(160deg,#191d29,#10121a);
             box-shadow:0 20px 45px rgba(0,0,0,0.5); }
   .de { font-size:clamp(1.45rem,5vw,2rem); font-weight:700; line-height:1.25; }
-  .ja { font-size:clamp(1.35rem,5vw,1.9rem); font-weight:700; line-height:1.35; color:#d8e6ff; }
+  .ja { font-size:var(--ja-size); font-weight:700; line-height:1.35; color:#d8e6ff; }
   .placeholder { color:var(--muted); }
   .meta { font-size:0.95rem; color:var(--muted); text-align:center; line-height:1.45; }
   .controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
@@ -73,6 +73,10 @@
       <div>
         <label>Voice (Japanese)</label>
         <select id="jaVoice" disabled></select>
+      </div>
+      <div>
+        <label for="jaSize">Japanese size: <span id="jaSizeValue">30</span>px</label>
+        <input id="jaSize" type="range" min="20" max="64" value="30"/>
       </div>
     </div>
     <label><input type="checkbox" id="autoMode" checked/> Auto mode</label>
@@ -325,6 +329,8 @@ const thinkDelayInput = document.getElementById("thinkDelay");
 const nextDelayInput = document.getElementById("nextDelay");
 const deVoiceSel = document.getElementById("deVoice");
 const jaVoiceSel = document.getElementById("jaVoice");
+const jaSizeInput = document.getElementById("jaSize");
+const jaSizeValue = document.getElementById("jaSizeValue");
 const autoModeChk = document.getElementById("autoMode");
 const metaEl = document.getElementById("meta");
 const deTextEl = document.getElementById("deText");
@@ -349,6 +355,13 @@ const LANGUAGE_VOICE_PREFERENCE = {
   de: [/microsoft\s+ingrid/i],
   ja: [/kyoko/i, /nanami/i, /google/i]
 };
+
+function updateJapaneseSize() {
+  const size = clampNumber(jaSizeInput.value, 20, 64, 30);
+  jaSizeInput.value = String(size);
+  jaSizeValue.textContent = String(size);
+  document.documentElement.style.setProperty("--ja-size", size + "px");
+}
 
 function clampNumber(value, min, max, fallback) {
   const parsed = Number(value);
@@ -482,7 +495,7 @@ function speak(text, langCode, repeat, voiceSelect, rates = null) {
       utterance.lang = langToBCP[langCode][0];
       if (Array.isArray(rates) && rates[currentRepeatIndex]) utterance.rate = rates[currentRepeatIndex];
       if (selectedVoice) utterance.voice = selectedVoice;
-      utterance.onend = () => left > 0 ? speakNext() : resolve();
+      utterance.onend = () => left > 0 ? setTimeout(speakNext, 1000) : resolve();
       utterance.onerror = resolve;
       synth.speak(utterance);
     };
@@ -605,10 +618,12 @@ autoModeChk.addEventListener("change", () => {
   clearTimer();
   if (autoModeChk.checked && schedule.length) playCurrentFromGerman();
 });
+jaSizeInput.addEventListener("input", updateJapaneseSize);
 
 if (typeof synth.onvoiceschanged !== "undefined") synth.onvoiceschanged = populateVoices;
 populateBlocks();
 populateVoices();
+updateJapaneseSize();
 blockPhrases = getSelectedBlock();
 schedule = buildReviewSchedule(blockPhrases);
 render();
