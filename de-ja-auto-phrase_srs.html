@@ -17,6 +17,11 @@
   label { font-weight:600; font-size:0.95rem; }
   select, input, button { width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.08);
                           padding:10px 14px; font-size:1rem; background:var(--surface-hi); color:var(--fg); }
+  input[type="range"] { appearance:none; -webkit-appearance:none; height:38px; padding:0 4px; background:transparent; border:none; cursor:pointer; }
+  input[type="range"]::-webkit-slider-runnable-track { height:8px; border-radius:8px; background:linear-gradient(90deg,#4c8bf5,#6cc4ff); }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; margin-top:-7px; border-radius:50%; border:2px solid #ffffff; background:#f7f7fa; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
+  input[type="range"]::-moz-range-track { height:8px; border-radius:8px; background:linear-gradient(90deg,#4c8bf5,#6cc4ff); }
+  input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:50%; border:2px solid #ffffff; background:#f7f7fa; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
   button.primary { background:linear-gradient(135deg,rgba(76,139,245,0.93),rgba(90,160,255,0.88)); border:none;
                    box-shadow:0 12px 28px rgba(76,139,245,0.35); font-weight:600; cursor:pointer; }
   button.secondary { background:rgba(24,28,40,0.9); font-weight:600; cursor:pointer; }
