@@ -293,7 +293,7 @@ function cancelSpeech() {
   synth.cancel();
 }
 
-function speak(text, langCode, repeat, voiceSelect) {
+function speak(text, langCode, repeat, voiceSelect, rates = null) {
   const token = ++speechToken;
   const repeats = clampNumber(repeat, 1, 5, 1);
   const selectedVoice = findVoice(voiceSelect, langCode);
@@ -301,11 +301,13 @@ function speak(text, langCode, repeat, voiceSelect) {
     let left = repeats;
     const speakNext = () => {
       if (token !== speechToken || left <= 0) { resolve(); return; }
+      const currentRepeatIndex = repeats - left;
       left -= 1;
       const cleanText = String(text || "").trim();
       if (!cleanText) { resolve(); return; }
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = langToBCP[langCode][0];
+      if (Array.isArray(rates) && rates[currentRepeatIndex]) utterance.rate = rates[currentRepeatIndex];
       if (selectedVoice) utterance.voice = selectedVoice;
       utterance.onend = () => left > 0 ? speakNext() : resolve();
       utterance.onerror = resolve;
@@ -367,7 +369,7 @@ function playJapanese() {
   showingJapanese = true;
   render();
   cancelSpeech();
-  speak(phrase.ja, "ja", Number(jaRepeatSel.value), jaVoiceSel).then(() => {
+  speak(phrase.ja, "ja", Number(jaRepeatSel.value), jaVoiceSel, [0.75, 0.85, 1]).then(() => {
     if (paused || !autoModeChk.checked) return;
     scheduleAfter(clampNumber(nextDelayInput.value, 1, 30, 3), nextStep);
   });
