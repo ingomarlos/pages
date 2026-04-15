@@ -48,6 +48,16 @@
         <select id="blockSelect"></select>
       </div>
       <div>
+        <label>Repetition mode</label>
+        <select id="scheduleMode">
+          <option value="intensive" selected>Intensive - new stuff</option>
+          <option value="reminder">Reminder - lighter review</option>
+        </select>
+      </div>
+      <div>
+        <label><input type="checkbox" id="shuffleBlock"/> Shuffle group before playing</label>
+      </div>
+      <div>
         <label>German repeats</label>
         <select id="deRepeat">
           <option value="1" selected>1x</option>
@@ -85,7 +95,7 @@
       </div>
     </div>
     <label><input type="checkbox" id="autoMode" checked/> Auto mode</label>
-    <p style="font-size:0.9rem;color:var(--muted);margin:0;">Pick a 20-phrase block. The session plays in a fixed review order with no saved data.</p>
+    <p style="font-size:0.9rem;color:var(--muted);margin:0;">Pick a 20-phrase block and a repetition mode. Intensive is for new material; Reminder is a lighter review. Nothing is saved.</p>
   </section>
 
   <section>
@@ -328,6 +338,8 @@ const PRELOADED_PHRASES = [
 const synth = window.speechSynthesis;
 const langToBCP = { de:["de-DE","de"], ja:["ja-JP","ja"] };
 const blockSelect = document.getElementById("blockSelect");
+const scheduleModeSel = document.getElementById("scheduleMode");
+const shuffleBlockChk = document.getElementById("shuffleBlock");
 const deRepeatSel = document.getElementById("deRepeat");
 const jaRepeatSel = document.getElementById("jaRepeat");
 const thinkDelayInput = document.getElementById("thinkDelay");
@@ -387,12 +399,26 @@ function populateBlocks() {
   }
 }
 
+function shufflePhrases(items) {
+  const copy = items.slice();
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 function getSelectedBlock() {
   const blockIndex = Number(blockSelect.value) || 0;
   const start = blockIndex * 20;
-  return PRELOADED_PHRASES.slice(start, start + 20).map((phrase, index) => ({
+  const selected = PRELOADED_PHRASES.slice(start, start + 20).map((phrase, index) => ({
     ...phrase,
     globalIndex: start + index + 1,
+    originalBlockIndex: index + 1
+  }));
+  const ordered = shuffleBlockChk.checked ? shufflePhrases(selected) : selected;
+  return ordered.map((phrase, index) => ({
+    ...phrase,
     blockIndex: index + 1
   }));
 }
@@ -405,7 +431,7 @@ function addRange(items, start, end) {
   return result;
 }
 
-function buildReviewSchedule(items) {
+function buildIntensiveSchedule(items) {
   if (!items.length) return [];
   const order = [];
   const pushRange = (start, end) => order.push(...addRange(items, start, end));
@@ -428,6 +454,35 @@ function buildReviewSchedule(items) {
   if (items.length > 10) pushRange(11, items.length);
 
   return order.map(phraseIndex => items[phraseIndex]);
+}
+
+function buildReminderSchedule(items) {
+  if (!items.length) return [];
+  const order = [];
+  const pushRange = (start, end) => order.push(...addRange(items, start, end));
+
+  pushRange(1, 5);
+  pushRange(6, 10);
+  if (items.length > 5) pushRange(1, 10);
+
+  pushRange(11, 15);
+  pushRange(16, 20);
+  if (items.length > 10) pushRange(11, 20);
+
+  if (items.length > 10) {
+    pushRange(1, 10);
+    pushRange(11, 20);
+  } else {
+    pushRange(1, items.length);
+  }
+
+  return order.map(phraseIndex => items[phraseIndex]);
+}
+
+function buildReviewSchedule(items) {
+  return scheduleModeSel.value === "reminder"
+    ? buildReminderSchedule(items)
+    : buildIntensiveSchedule(items);
 }
 
 function populateVoices() {
@@ -569,6 +624,18 @@ function playJapanese() {
 function nextStep() {
   if (!schedule.length) return;
   if (stepIndex >= schedule.length - 1) {
+    const nextBlockIndex = (Number(blockSelect.value) || 0) + 1;
+    if (nextBlockIndex < blockSelect.options.length) {
+      blockSelect.value = String(nextBlockIndex);
+      blockPhrases = getSelectedBlock();
+      schedule = buildReviewSchedule(blockPhrases);
+      stepIndex = 0;
+      showingJapanese = false;
+      paused = false;
+      setControlsEnabled(schedule.length > 0);
+      playCurrentFromGerman();
+      return;
+    }
     paused = true;
     clearTimer();
     autoModeChk.checked = false;
@@ -609,6 +676,28 @@ prevBtn.addEventListener("click", previousStep);
 nextBtn.addEventListener("click", nextStep);
 replayBtn.addEventListener("click", playCurrentFromGerman);
 blockSelect.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingJapanese = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+scheduleModeSel.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingJapanese = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+shuffleBlockChk.addEventListener("change", () => {
   clearTimer();
   cancelSpeech();
   blockPhrases = getSelectedBlock();

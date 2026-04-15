@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>EN-DE Phrase SRS</title>
+<style>
+  :root { --bg:#0b0b0c; --fg:#f7f7fa; --muted:#9aa0a6; --surface:#151821; --surface-hi:#1f2330; --target-size:30px; }
+  * { box-sizing:border-box; }
+  body { font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+         background:var(--bg); color:var(--fg); margin:0; min-height:100vh;
+         display:flex; justify-content:center; }
+  .app { width:min(760px,100%); padding:clamp(18px,4vw,32px); display:flex; flex-direction:column; gap:20px; }
+  h1 { margin:0; text-align:center; font-size:clamp(1.6rem,5vw,2.4rem); }
+  .panel { background:var(--surface); border:1px solid rgba(255,255,255,0.08); border-radius:8px;
+           padding:clamp(16px,4vw,26px); box-shadow:0 18px 40px rgba(0,0,0,0.45); display:flex; flex-direction:column; gap:14px; }
+  label { font-weight:600; font-size:0.95rem; }
+  select, input, button { width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.08);
+                          padding:10px 14px; font-size:1rem; background:var(--surface-hi); color:var(--fg); }
+  input[type="range"] { appearance:none; -webkit-appearance:none; height:38px; padding:0 4px; background:transparent; border:none; cursor:pointer; }
+  input[type="range"]::-webkit-slider-runnable-track { height:8px; border-radius:8px; background:linear-gradient(90deg,#4c8bf5,#6cc4ff); }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; margin-top:-7px; border-radius:50%; border:2px solid #ffffff; background:#f7f7fa; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
+  input[type="range"]::-moz-range-track { height:8px; border-radius:8px; background:linear-gradient(90deg,#4c8bf5,#6cc4ff); }
+  input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:50%; border:2px solid #ffffff; background:#f7f7fa; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
+  button.primary { background:linear-gradient(135deg,rgba(76,139,245,0.93),rgba(90,160,255,0.88)); border:none;
+                   box-shadow:0 12px 28px rgba(76,139,245,0.35); font-weight:600; cursor:pointer; }
+  button.secondary { background:rgba(24,28,40,0.9); font-weight:600; cursor:pointer; }
+  button:disabled { opacity:0.5; cursor:not-allowed; }
+  .phrase { min-height:260px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            text-align:center; gap:18px; padding:30px; border-radius:8px; background:linear-gradient(160deg,#191d29,#10121a);
+            box-shadow:0 20px 45px rgba(0,0,0,0.5); }
+  .source { font-size:clamp(1.45rem,5vw,2rem); font-weight:700; line-height:1.25; }
+  .target { font-size:var(--target-size); font-weight:700; line-height:1.35; color:#d8e6ff; }
+  .meta { font-size:0.95rem; color:var(--muted); text-align:center; line-height:1.45; }
+  .controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>EN-DE Phrase SRS</h1>
+
+  <section class="panel">
+    <div class="controls">
+      <div>
+        <label>Block</label>
+        <select id="blockSelect"></select>
+      </div>
+      <div>
+        <label>Repetition mode</label>
+        <select id="scheduleMode">
+          <option value="intensive" selected>Intensive - new stuff</option>
+          <option value="reminder">Reminder - lighter review</option>
+        </select>
+      </div>
+      <div>
+        <label><input type="checkbox" id="shuffleBlock"/> Shuffle group before playing</label>
+      </div>
+      <div>
+        <label>English repeats</label>
+        <select id="sourceRepeat">
+          <option value="1" selected>1x</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+        </select>
+      </div>
+      <div>
+        <label>German repeats</label>
+        <select id="targetRepeat">
+          <option value="1">1x</option>
+          <option value="2">2x</option>
+          <option value="3" selected>3x</option>
+        </select>
+      </div>
+      <div>
+        <label>Think time (sec)</label>
+        <input id="thinkDelay" type="number" min="1" max="30" value="8"/>
+      </div>
+      <div>
+        <label>Next phrase after (sec)</label>
+        <input id="nextDelay" type="number" min="1" max="30" value="5"/>
+      </div>
+      <div>
+        <label>Voice (English)</label>
+        <select id="sourceVoice" disabled></select>
+      </div>
+      <div>
+        <label>Voice (German)</label>
+        <select id="targetVoice" disabled></select>
+      </div>
+      <div>
+        <label for="targetSize">German size: <span id="targetSizeValue">30</span>px</label>
+        <input id="targetSize" type="range" min="20" max="64" value="30"/>
+      </div>
+    </div>
+    <label><input type="checkbox" id="autoMode" checked/> Auto mode</label>
+    <p style="font-size:0.9rem;color:var(--muted);margin:0;">Replace the sample phrases in <code>PRELOADED_PHRASES</code>. Blocks are generated automatically in groups of 20.</p>
+  </section>
+
+  <section>
+    <div class="meta" id="meta">Press Start.</div>
+    <div class="phrase">
+      <div class="source" id="sourceText">Waiting...</div>
+      <div class="target hidden" id="targetText"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <button id="startBtn" class="primary">Start</button>
+      <button id="pauseBtn" class="secondary" disabled>Pause</button>
+      <button id="prevBtn" class="secondary" disabled>Previous step</button>
+      <button id="nextBtn" class="secondary" disabled>Next step</button>
+      <button id="replayBtn" class="secondary" disabled>Replay current</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// Add as many phrases as you want. Blocks are generated automatically in groups of 20.
+const PRELOADED_PHRASES = [
+  { en: "I thank the speakers.", de: "Ich danke den Vortragenden." },
+  { en: "The speakers are already there.", de: "Die Vortragenden sind schon da." },
+  { en: "There is a bad stink here.", de: "Hier ist ein schlimmer Gestank." },
+  { en: "The stink comes from the kitchen.", de: "Der Gestank kommt aus der Küche." },
+  { en: "Please do not hide that.", de: "Bitte verschweige das nicht." },
+  { en: "He hides the truth.", de: "Er verschweigt die Wahrheit." },
+  { en: "I will get bread today.", de: "Ich besorge heute Brot." },
+  { en: "That worries me a lot.", de: "Das besorgt mich sehr." },
+  { en: "She gets a promotion.", de: "Sie bekommt eine Beförderung." },
+  { en: "The transport of the furniture takes a long time.", de: "Die Beförderung der Möbel dauert lange." },
+  { en: "The leaves are infested with insects.", de: "Die Blätter sind von Insekten befallen." },
+  { en: "Fear suddenly seized him.", de: "Die Angst hat ihn plötzlich befallen." },
+  { en: "That concerns me.", de: "Das geht mich an." },
+  { en: "The problem concerns me too.", de: "Das Problem geht mich auch an." },
+  { en: "The car is ready for use.", de: "Das Auto ist einsatzbereit." },
+  { en: "I am ready tomorrow.", de: "Ich bin morgen einsatzbereit." },
+  { en: "Hurry up, otherwise we will be late.", de: "Beeil dich, sonst kommen wir zu spät." },
+  { en: "Otherwise everything is fine.", de: "Sonst ist alles gut." },
+  { en: "He has a large fortune.", de: "Er hat ein großes Vermögen." },
+  { en: "The whole fortune is gone.", de: "Das ganze Vermögen ist weg." },
+  { en: "The train brings goods.", de: "Der Zug bringt Güter." },
+  { en: "These goods are expensive.", de: "Diese Güter sind teuer." },
+  { en: "What happened to you?", de: "Was ist dir zugestoßen?" },
+  { en: "He bumped into the table.", de: "Er ist gegen den Tisch zugestoßen." },
+  { en: "Today I have nothing to do.", de: "Heute habe ich nichts zu unternehmen." },
+  { en: "In the evening I had nothing to do.", de: "Am Abend hatte ich nichts zu unternehmen." },
+  { en: "I am tired, he, on the other hand, is awake.", de: "Ich bin müde, er hingegen ist wach." },
+  { en: "She stays home, I, on the other hand, go out.", de: "Sie bleibt zu Hause, ich hingegen gehe raus." },
+  { en: "He is very sly.", de: "Er ist sehr verschlagen." },
+  { en: "The boat was driven to the shore.", de: "Das Boot wurde ans Ufer verschlagen." },
+  { en: "That is unfair.", de: "Das ist ungerecht." },
+  { en: "The teacher was unfair today.", de: "Der Lehrer war heute ungerecht." },
+  { en: "That does not need to trouble you.", de: "Das muss dich nicht krämen." },
+  { en: "She is upset because of the mistake.", de: "Sie grämt sich wegen des Fehlers." },
+  { en: "We help our allies.", de: "Wir helfen unseren Verbündeten." },
+  { en: "The allies are strong.", de: "Die Verbündeten sind stark." },
+  { en: "I see a tiny dot.", de: "Ich sehe einen winzigen Punkt." },
+  { en: "He has a tiny dog.", de: "Er hat einen winzigen Hund." },
+  { en: "I live in this area.", de: "Ich wohne in dieser Gegend." },
+  { en: "The area is quiet.", de: "Die Gegend ist ruhig." },
+  { en: "Why am I never informed?", de: "Warum weiß ich nie Bescheid?" },
+  { en: "With you I always ask: Why am I never informed?", de: "Bei euch frage ich immer: Warum weiß ich nie Bescheid?" },
+  { en: "She likes me.", de: "Sie kann mich gut leiden." },
+  { en: "I think he likes me.", de: "Ich glaube, er kann mich gut leiden." },
+  { en: "The intruders are in the house.", de: "Die Eindringlinge sind im Haus." },
+  { en: "The dog hears intruders.", de: "Der Hund hört Eindringlinge." },
+  { en: "He strolls through the park.", de: "Er wandelt durch den Park." },
+  { en: "The city changes quickly.", de: "Die Stadt wandelt sich schnell." },
+  { en: "The fire consumes the wood.", de: "Das Feuer verschlingt das Holz." },
+  { en: "He devours his food.", de: "Er verschlingt sein Essen." },
+  { en: "He says that just to be contrary.", de: "Das sagt er nur aus Prinzip quer." },
+  { en: "He always resists.", de: "Er stellt sich immer quer." },
+  { en: "He bows.", de: "Er verneigt sich." },
+  { en: "She bows to the audience.", de: "Sie verneigt sich vor dem Publikum." },
+  { en: "I destroy the letter.", de: "Ich vernichte den Brief." },
+  { en: "Please destroy the old papers.", de: "Vernichte bitte die alten Papiere." },
+  { en: "The baby is cute.", de: "Das Baby ist niedlich." },
+  { en: "Your dog is very cute.", de: "Dein Hund ist sehr niedlich." },
+  { en: "This place is more suitable.", de: "Dieser Platz ist geeigneter." },
+  { en: "A quiet room is more suitable.", de: "Ein ruhiger Raum ist geeigneter." },
+  { en: "I could sense that.", de: "Ich konnte das ahnen." },
+  { en: "She suspects nothing.", de: "Sie ahnt nichts." },
+  { en: "He is a supporter of this idea.", de: "Er ist ein Anhänger dieser Idee." },
+  { en: "The trailer is behind the car.", de: "Der Anhänger steht hinter dem Auto." },
+  { en: "Please do not push me.", de: "Bitte stoß mich nicht." },
+  { en: "We toast with juice.", de: "Wir stoßen mit Saft an." },
+  { en: "He seems simple-minded.", de: "Er wirkt einfältig." },
+  { en: "The question was very naive.", de: "Die Frage war sehr einfältig." },
+  { en: "That is not especially difficult.", de: "Das ist nicht sonderlich schwer." },
+  { en: "I am not especially tired.", de: "Ich bin nicht sonderlich müde." },
+  { en: "It is small, but at least clean.", de: "Es ist klein, aber immerhin sauber." },
+  { en: "He came late, but at least he came.", de: "Er kam spät, aber immerhin kam er." },
+  { en: "I ask you to leave.", de: "Ich fordere dich auf zu gehen." },
+  { en: "The teacher asks us to read.", de: "Der Lehrer fordert uns auf zu lesen." },
+  { en: "We agree.", de: "Wir sind uns einig." },
+  { en: "After a long time they finally agreed.", de: "Nach langer Zeit waren sie endlich einig." },
+  { en: "I am exhausted.", de: "Ich bin erschöpft." },
+  { en: "After work she was exhausted.", de: "Nach der Arbeit war sie erschöpft." },
+  { en: "The book falls down.", de: "Das Buch fällt herunter." },
+  { en: "A name comes to my mind.", de: "Mir fällt ein Name ein." },
+  { en: "It is hard to get there.", de: "Es ist schwer, dorthin zu gelangen." },
+  { en: "How can I get there faster?", de: "Wie kann ich schneller hinzugelangen?" },
+  { en: "He can deal well with children.", de: "Er kann gut mit Kindern umgehen." },
+  { en: "We avoid the problem.", de: "Wir umgehen das Problem." },
+  { en: "We walk along the river.", de: "Wir gehen den Fluss entlang." },
+  { en: "There are trees along the street.", de: "Es gibt Bäume entlang der Straße." },
+  { en: "I do not want revenge.", de: "Ich will mich nicht rächen." },
+  { en: "He wants to avenge his brother.", de: "Er will seinen Bruder rächen." },
+  { en: "I cannot think of anything.", de: "Mir fällt nichts ein." },
+  { en: "Suddenly the answer came to me.", de: "Plötzlich fiel mir die Antwort ein." },
+  { en: "The farmer drives the cows out.", de: "Der Bauer treibt die Kühe aus." },
+  { en: "You have to drive the smoke out.", de: "Man muss den Rauch austreiben." },
+  { en: "We met by chance.", de: "Wir trafen uns zufällig." },
+  { en: "Did you happen to see that?", de: "Hast du das zufällig gesehen?" },
+  { en: "What are you thinking about?", de: "Woran denkst du?" },
+  { en: "What is that due to?", de: "Woran liegt das?" },
+  { en: "I am not going, and you especially are not.", de: "Ich gehe nicht, und du erst recht nicht." },
+  { en: "If he is not allowed, then you even less.", de: "Wenn er es nicht darf, dann du erst recht nicht." },
+  { en: "The problem is only temporary.", de: "Das Problem ist nur vorübergehend." },
+  { en: "I live here temporarily.", de: "Ich wohne hier vorübergehend." },
+  { en: "I watch the sheep.", de: "Ich hüte die Schafe." },
+  { en: "Watch out for the dog.", de: "Hüte dich vor dem Hund." },
+  { en: "The music is in harmony.", de: "Die Musik ist im Einklang." },
+  { en: "We live in harmony with nature.", de: "Wir leben im Einklang mit der Natur." },
+  { en: "That is a legendary place.", de: "Das ist ein sagenumwobener Ort." },
+  { en: "They are looking for the legendary treasure.", de: "Sie suchen den sagenumwobenen Schatz." },
+  { en: "The guard stands at the gate.", de: "Der Wächter steht am Tor." },
+  { en: "The guard sees everything.", de: "Der Wächter sieht alles." },
+  { en: "That is a perfect circle.", de: "Das ist ein vollkommener Kreis." },
+  { en: "He wants to be a perfect person.", de: "Er will ein vollkommener Mensch sein." },
+  { en: "That is unnecessary.", de: "Das ist überflüssig." },
+  { en: "The question was unnecessary.", de: "Die Frage war überflüssig." },
+  { en: "That is certainly true.", de: "Das ist gewiss wahr." },
+  { en: "I will certainly come tomorrow.", de: "Ich komme gewiss morgen." },
+  { en: "That is the root of the evil.", de: "Das ist die Wurzel des Übels." },
+  { en: "He knows the cause of the evil.", de: "Er kennt den Grund des Übels." },
+  { en: "Someone stole my bicycle.", de: "Jemand hat mein Fahrrad geklaut." },
+  { en: "He stole money.", de: "Er hat Geld geklaut." },
+  { en: "Please do not hit me.", de: "Bitte hau mich nicht." },
+  { en: "I am leaving now.", de: "Ich haue jetzt ab." },
+  { en: "We got lost in the forest.", de: "Wir haben uns im Wald verirrt." },
+  { en: "He got lost in the city.", de: "Er hat sich in der Stadt verirrt." },
+  { en: "He decided to go.", de: "Er beschloss zu gehen." },
+  { en: "She decided to stay quiet.", de: "Sie beschloss, still zu bleiben." },
+  { en: "I acquire an old book.", de: "Ich erstehe ein altes Buch." },
+  { en: "Something new can arise from the ruin.", de: "Aus der Ruine kann etwas Neues erstehen." },
+  { en: "He endured the pain.", de: "Er ertrug den Schmerz." },
+  { en: "She did not endure the heat for long.", de: "Sie ertrug die Hitze nicht lange." },
+  { en: "I want to meet you tomorrow.", de: "Ich will dir morgen begegnen." },
+  { en: "I met Anna on the street.", de: "Auf der Straße begegnete ich Anna." },
+  { en: "The fire destroys the house.", de: "Das Feuer vernichtet das Haus." },
+  { en: "Please destroy the letter.", de: "Bitte vernichte den Brief." },
+  { en: "He gets new wood.", de: "Er beschafft neues Holz." },
+  { en: "She got the food.", de: "Sie hat das Essen beschafft." },
+  { en: "The punishment was hard.", de: "Die Bestrafung war hart." },
+  { en: "He got a punishment.", de: "Er bekam eine Bestrafung." },
+  { en: "The film brings terror.", de: "Der Film bringt Schrecken." },
+  { en: "To my horror, the door was open.", de: "Zu meinem Schrecken war die Tür offen." },
+  { en: "She wants to gain fame.", de: "Sie will Ruhm erlangen." },
+  { en: "He could not attain the goal.", de: "Er konnte das Ziel nicht erlangen." },
+  { en: "Once there was a castle here.", de: "Einst war hier ein Schloss." },
+  { en: "Once he lived by the sea.", de: "Einst lebte er am Meer." },
+  { en: "She is the bravest woman here.", de: "Sie ist die tapferste Frau hier." },
+  { en: "He was the bravest soldier.", de: "Er war der tapferste Soldat." },
+  { en: "The battle was long.", de: "Die Schlacht war lang." },
+  { en: "They lost the battle.", de: "Sie verloren die Schlacht." },
+  { en: "He is apparently sick.", de: "Er ist anscheinend krank." },
+  { en: "Apparently it will rain later.", de: "Anscheinend regnet es später." },
+  { en: "The mother does not want to punish the child.", de: "Die Mutter will das Kind nicht bestrafen." },
+  { en: "One must not punish without reason.", de: "Man darf nicht ohne Grund bestrafen." },
+  { en: "Do you have proof?", de: "Hast du Beweise?" },
+  { en: "The police are looking for evidence.", de: "Die Polizei sucht Beweise." },
+  { en: "The engine failed.", de: "Der Motor hat versagt." },
+  { en: "He failed in the exam.", de: "Er hat in der Prüfung versagt." },
+  { en: "The commander gives an order.", de: "Der Befehlshaber gibt einen Befehl." },
+  { en: "Everyone listens to the commander.", de: "Alle hören auf den Befehlshaber." },
+  { en: "He bows deeply.", de: "Er verneigt sich tief." },
+  { en: "She bows before the king.", de: "Sie verneigt sich vor dem König." },
+  { en: "Please do not reveal my secret.", de: "Bitte verrate mein Geheimnis nicht." },
+  { en: "He betrayed his friend.", de: "Er hat seinen Freund verraten." },
+  { en: "I absolutely want to see that.", de: "Ich will das unbedingt sehen." },
+  { en: "You do not absolutely have to come.", de: "Du musst nicht unbedingt kommen." },
+  { en: "The accident obstructed the traffic.", de: "Der Unfall behinderte den Verkehr." },
+  { en: "The noise hindered my work.", de: "Der Lärm behinderte meine Arbeit." },
+  { en: "You will not fail today.", de: "Du scheiterst nicht heute." },
+  { en: "If you do not try, you will surely fail.", de: "Wenn du es nicht versuchst, scheiterst du sicher." },
+  { en: "I am not the one you think I am.", de: "Ich bin nicht der, für den du mich hältst." },
+  { en: "He is not the hero you think I am taking him for.", de: "Er ist nicht der Held, für den du mich hältst." },
+  { en: "He wants to accomplish something great.", de: "Er will etwas Großes vollbringen." },
+  { en: "We can accomplish that together.", de: "Wir können das zusammen vollbringen." },
+  { en: "The house is surrounded.", de: "Das Haus ist umzingelt." },
+  { en: "We were surrounded by enemies.", de: "Wir waren von Feinden umzingelt." },
+  { en: "I am constantly learning new words.", de: "Ich lerne laufend neue Wörter." },
+  { en: "The costs are constantly rising.", de: "Die Kosten steigen laufend." },
+  { en: "The phone is a distraction.", de: "Das Handy ist eine Ablenkung." },
+  { en: "I do not need a distraction.", de: "Ich brauche keine Ablenkung." },
+  { en: "That is a shame.", de: "Das ist eine Schande." },
+  { en: "It would be a shame to lie.", de: "Es wäre eine Schande zu lügen." },
+  { en: "Can you prove that?", de: "Kannst du das belegen?" },
+  { en: "All seats are occupied.", de: "Alle Plätze sind belegt." },
+  { en: "The man is in the dungeon.", de: "Der Mann sitzt im Kerker." },
+  { en: "The dungeon is dark.", de: "Der Kerker ist dunkel." },
+  { en: "I am disappointed.", de: "Ich bin enttäuscht." },
+  { en: "She was very disappointed in him.", de: "Sie war sehr enttäuscht von ihm." },
+  { en: "The king grants help.", de: "Der König gewährt Hilfe." },
+  { en: "He was granted time.", de: "Man hat ihm Zeit gewährt." },
+  { en: "That was cruel.", de: "Das war grausam." },
+  { en: "The winter was cruelly cold.", de: "Der Winter war grausam kalt." },
+  { en: "The enemy was merciless.", de: "Der Feind war erbarmungslos." },
+  { en: "The sun was mercilessly hot.", de: "Die Sonne war erbarmungslos heiß." },
+  { en: "I was forced to do it.", de: "Ich war dazu gezwungen." },
+  { en: "She was forced to wait.", de: "Sie wurde zum Warten gezwungen." },
+  { en: "Please come up.", de: "Komm bitte herauf." },
+  { en: "He looked up to the sky.", de: "Er sah zum Himmel herauf." },
+  { en: "He did not succeed.", de: "Es gelang ihm nicht." },
+  { en: "The plan succeeded in the end.", de: "Der Plan gelang am Ende." },
+  { en: "I have to dispose of the trash.", de: "Ich muss den Müll entsorgen." },
+  { en: "Please dispose of the bottles.", de: "Bitte entsorge die Flaschen." },
+  { en: "That is exclusively for children.", de: "Das ist ausschließlich für Kinder." },
+  { en: "He eats only vegetables.", de: "Er isst ausschließlich Gemüse." },
+  { en: "The owner lives here.", de: "Der Eigentümer wohnt hier." },
+  { en: "Who is the owner of the house?", de: "Wer ist der Eigentümer des Hauses?" },
+  { en: "I rely on you.", de: "Ich verlasse mich auf dich." },
+  { en: "He relies on his friends.", de: "Er verlässt sich auf seine Freunde." },
+  { en: "He works as a mediator.", de: "Er arbeitet als Vermittler." },
+  { en: "The mediator helps both sides.", de: "Der Vermittler hilft beiden Seiten." },
+  { en: "They run a café.", de: "Sie betreiben ein Café." },
+  { en: "We do sports.", de: "Wir betreiben Sport." },
+  { en: "A new house is being built here.", de: "Hier entsteht ein neues Haus." },
+  { en: "Many problems arise like that.", de: "Viele Probleme entstehen so." },
+  { en: "The shop is open continuously.", de: "Das Geschäft ist durchgehend offen." },
+  { en: "He works eight hours straight.", de: "Er arbeitet durchgehend acht Stunden." },
+  { en: "The teacher gives a reprimand.", de: "Der Lehrer gibt einen Verweis." },
+  { en: "In the text there is a reference to the book.", de: "Im Text gibt es einen Verweis auf das Buch." },
+  { en: "That is the new version.", de: "Das ist die neue Fassung." },
+  { en: "After the shock he lost his composure.", de: "Nach dem Schock verlor er die Fassung." },
+  { en: "He summons the spirit.", de: "Er beschwört den Geist." },
+  { en: "She implores him to stay calm.", de: "Sie beschwört ihn, ruhig zu bleiben." },
+  { en: "You need skill for that.", de: "Dafür braucht man Geschick." },
+  { en: "With great skill she solved the problem.", de: "Mit viel Geschick löste sie das Problem." },
+  { en: "He is unable to help.", de: "Er ist unfähig zu helfen." },
+  { en: "I was unable to speak.", de: "Ich war unfähig zu sprechen." },
+  { en: "Please include me.", de: "Bitte beziehe mich ein." },
+  { en: "We have to include all costs.", de: "Wir müssen alle Kosten einbeziehen." },
+  { en: "The child is prone to colds.", de: "Das Kind ist anfällig für Erkältungen." },
+  { en: "This system is prone to errors.", de: "Dieses System ist anfällig für Fehler." },
+  { en: "The consumption is high.", de: "Der Verbrauch ist hoch." },
+  { en: "My car has low consumption.", de: "Mein Auto hat einen geringen Verbrauch." },
+  { en: "The prices are increased.", de: "Die Preise sind erhöht." },
+  { en: "The fever is elevated.", de: "Das Fieber ist erhöht." },
+  { en: "The loss of the help is bad.", de: "Der Wegfall der Hilfe ist schlimm." },
+  { en: "Because of the omission we save money.", de: "Wegen des Wegfalls sparen wir Geld." },
+  { en: "His effort was great.", de: "Sein Einsatz war groß." },
+  { en: "The fire brigade is on duty.", de: "Die Feuerwehr ist im Einsatz." },
+  { en: "That was a foreseeable problem.", de: "Das war ein vorhersehbares Problem." },
+  { en: "A foreseeable ending is not exciting.", de: "Ein vorhersehbares Ende ist nicht spannend." },
+  { en: "I send you the information in advance.", de: "Ich schicke dir die Infos vorab." },
+  { en: "Please pay in advance.", de: "Bitte bezahle vorab." },
+  { en: "We are having a detailed conversation.", de: "Wir machen ein eingehendes Gespräch." },
+  { en: "After a thorough review everything was clear.", de: "Nach eingehender Prüfung war alles klar." },
+  { en: "The submitting persons are waiting.", de: "Die einreichenden Personen warten." },
+  { en: "We help the submitting companies.", de: "Wir helfen den einreichenden Firmen." },
+  { en: "I am registered there.", de: "Ich bin dort eingetragen." },
+  { en: "The name is entered incorrectly.", de: "Der Name ist falsch eingetragen." },
+  { en: "The processes are clear.", de: "Die Abläufe sind klar." },
+  { en: "We improve the processes in the office.", de: "Wir verbessern die Abläufe im Büro." },
+  { en: "The mistake is clearly visible.", de: "Der Fehler ist klar erkennbar." },
+  { en: "The goal was not recognizable.", de: "Das Ziel war nicht erkennbar." },
+  { en: "Everything is controlled digitally.", de: "Alles wird digital gesteuert." },
+  { en: "The car was controlled remotely.", de: "Das Auto wurde fern gesteuert." },
+  { en: "I am coming on Monday, or rather Tuesday.", de: "Ich komme am Montag bzw. Dienstag." },
+  { en: "Two or rather three people help us.", de: "Zwei bzw. drei Leute helfen uns." },
+  { en: "The demolition of the house starts tomorrow.", de: "Der Abbruch des Hauses beginnt morgen." },
+  { en: "After the cancellation he went home.", de: "Nach dem Abbruch ging er nach Hause." },
+  { en: "Water and salt are components of the soup.", de: "Wasser und Salz sind Bestandteile der Suppe." },
+  { en: "This machine has many components.", de: "Diese Maschine hat viele Bestandteile." },
+  { en: "That was not meant badly.", de: "Das war nicht böse gemeint." },
+  { en: "Whom did you mean?", de: "Wen hast du gemeint?" },
+  { en: "I take the table apart.", de: "Ich zerlege den Tisch." },
+  { en: "He takes the radio apart.", de: "Er zerlegt das Radio." },
+  { en: "The house is shown in the book.", de: "Das Haus ist im Buch abgebildet." },
+  { en: "A dog is depicted in the photo.", de: "Auf dem Foto ist ein Hund abgebildet." },
+  { en: "I need a clear answer.", de: "Ich brauche eine eindeutige Antwort." },
+  { en: "That is a clear rule.", de: "Das ist eine eindeutige Regel." },
+  { en: "The mandatory information is missing.", de: "Die Pflichtangaben fehlen." },
+  { en: "Please check the mandatory information.", de: "Bitte prüfe die Pflichtangaben." },
+  { en: "I have to refill water.", de: "Ich muss Wasser auffüllen." },
+  { en: "Please refill the glass.", de: "Bitte fülle das Glas auf." },
+  { en: "Please consider my idea.", de: "Bitte berücksichtige meine Idee." },
+  { en: "We must consider all costs.", de: "Wir müssen alle Kosten berücksichtigen." },
+  { en: "You are exaggerating a little.", de: "Du übertreibst ein bisschen." },
+  { en: "Why are you exaggerating like that?", de: "Warum übertreibst du so?" },
+  { en: "You design the room nicely.", de: "Du gestaltest das Zimmer schön." },
+  { en: "How do you organize your free time?", de: "Wie gestaltest du deine Freizeit?" },
+  { en: "We explore the city.", de: "Wir erkunden die Stadt." },
+  { en: "They want to explore the forest.", de: "Sie wollen den Wald erkunden." },
+  { en: "He is supposedly sick.", de: "Er ist angeblich krank." },
+  { en: "Supposedly she is coming later.", de: "Angeblich kommt sie später." },
+  { en: "I regret my mistake.", de: "Ich bereue meinen Fehler." },
+  { en: "I do not regret that.", de: "Das bereue ich nicht." },
+  { en: "That was a nice encounter.", de: "Das war eine schöne Begegnung." },
+  { en: "Our first encounter was short.", de: "Unsere erste Begegnung war kurz." },
+  { en: "He answered the question in the negative.", de: "Er hat die Frage verneint." },
+  { en: "She denies all help.", de: "Sie verneint jede Hilfe." },
+  { en: "I look at the picture.", de: "Ich betrachte das Bild." },
+  { en: "We look at the problem closely.", de: "Wir betrachten das Problem genau." },
+  { en: "The food turned out well.", de: "Das Essen ist gut gelungen." },
+  { en: "The plan was successful.", de: "Der Plan ist gelungen." },
+  { en: "Can you confirm that?", de: "Kannst du das bestätigen?" },
+  { en: "She confirmed the appointment.", de: "Sie bestätigte den Termin." },
+  { en: "The amount is high.", de: "Der Betrag ist hoch." },
+  { en: "I pay the full amount.", de: "Ich zahle den ganzen Betrag." },
+  { en: "That is a public building.", de: "Das ist ein öffentliches Gebäude." },
+  { en: "We need a public means of transport.", de: "Wir brauchen ein öffentliches Verkehrsmittel." },
+  { en: "Please answer in writing.", de: "Bitte antworte schriftlich." },
+  { en: "The rules are there in writing.", de: "Die Regeln sind schriftlich da." },
+  { en: "I need a written confirmation.", de: "Ich brauche eine schriftliche Bestätigung." },
+  { en: "She gave a written answer.", de: "Sie gab eine schriftliche Antwort." },
+  { en: "We are looking for accommodation.", de: "Wir suchen eine Unterkunft." },
+  { en: "The accommodation is small but clean.", de: "Die Unterkunft ist klein, aber sauber." },
+  { en: "It seems to me that he is right.", de: "Mich deucht, er hat recht." },
+  { en: "It seems strange to me.", de: "Es deucht mich seltsam." },
+  { en: "The goods have arrived.", de: "Die Ware ist angekommen." },
+  { en: "These goods are expensive.", de: "Diese Ware ist teuer." },
+  { en: "I need your approval.", de: "Ich brauche deine Zustimmung." },
+  { en: "Without approval that does not work.", de: "Ohne Zustimmung geht das nicht." },
+  { en: "I have to hand in the package.", de: "Ich muss das Paket abgeben." },
+  { en: "Please hand in the form today.", de: "Bitte gib das Formular heute ab." },
+  { en: "I want to lock the door.", de: "Ich will die Tür abschließen." },
+  { en: "We have to conclude the contract.", de: "Wir müssen den Vertrag abschließen." },
+  { en: "My graduation is soon.", de: "Mein Abschluss ist bald." },
+  { en: "That is a good ending.", de: "Das ist ein guter Abschluss." },
+  { en: "I am trying to finish the work.", de: "Ich versuche, die Arbeit abzuschließen." },
+  { en: "He plans to complete his studies.", de: "Er plant, das Studium abzuschließen." },
+  { en: "That is a private matter.", de: "Das ist eine private Angelegenheit." },
+  { en: "We will settle the matter tomorrow.", de: "Wir klären die Angelegenheit morgen." },
+  { en: "The weather is pleasant.", de: "Das Wetter ist angenehm." },
+  { en: "He has a pleasant voice.", de: "Er hat eine angenehme Stimme." },
+  { en: "Please keep the photo safe.", de: "Bitte bewahre das Foto gut." },
+  { en: "It is important to stay calm.", de: "Ruhe zu bewahren ist wichtig." },
+  { en: "The train arrives on time.", de: "Der Zug kommt pünktlich an." },
+  { en: "It depends on you.", de: "Es kommt auf dich an." },
+  { en: "The work is exhausting.", de: "Die Arbeit ist anstrengend." },
+  { en: "The day was very tiring.", de: "Der Tag war sehr anstrengend." },
+  { en: "Please read the instructions.", de: "Bitte lies die Anweisungen." },
+  { en: "I follow the instructions.", de: "Ich folge den Anweisungen." },
+  { en: "I keep the money here.", de: "Ich bewahre das Geld hier auf." },
+  { en: "Please keep the receipt.", de: "Bitte bewahre die Rechnung auf." },
+  { en: "The song was recorded.", de: "Das Lied wurde aufgenommen." },
+  { en: "He was accepted into the team.", de: "Er wurde ins Team aufgenommen." },
+  { en: "Because of the rain we stay at home.", de: "Aufgrund des Regens bleiben wir zu Hause." },
+  { en: "Because of an error everything was late.", de: "Aufgrund eines Fehlers war alles spät." },
+  { en: "I want to record a video.", de: "Ich will ein Video aufnehmen." },
+  { en: "The school wants to accept him.", de: "Die Schule will ihn aufnehmen." },
+  { en: "The film is exciting.", de: "Der Film ist aufregend." },
+  { en: "Today was an exciting day.", de: "Heute war ein aufregender Tag." },
+  { en: "I do not want to spend much money.", de: "Ich will nicht viel Geld ausgeben." },
+  { en: "The printer gives out paper.", de: "Der Drucker gibt Papier aus." },
+  { en: "We are going out tonight.", de: "Wir gehen heute Abend aus." },
+  { en: "I assume that he is coming.", de: "Ich gehe davon aus, dass er kommt." },
+  { en: "His statement is clear.", de: "Seine Aussage ist klar." },
+  { en: "The police check the statement.", de: "Die Polizei prüft die Aussage." },
+  { en: "The house is outside the city.", de: "Das Haus liegt außerhalb der Stadt." },
+  { en: "Outside school I play football.", de: "Außerhalb der Schule spiele ich Fußball." },
+  { en: "Please pronounce the word.", de: "Bitte sprich das Wort aus." },
+  { en: "I do not want to speak against that.", de: "Ich will mich gegen das nicht aussprechen." },
+  { en: "The selection is large.", de: "Die Auswahl ist groß." },
+  { en: "I do not have a good selection.", de: "Ich habe keine gute Auswahl." },
+  { en: "It is hard to express that.", de: "Es ist schwer, das auszudrücken." },
+  { en: "I try to express my feelings.", de: "Ich versuche, meine Gefühle auszudrücken." },
+  { en: "The sky is cloudy.", de: "Der Himmel ist bedeckt." },
+  { en: "The table is covered with paper.", de: "Der Tisch ist mit Papier bedeckt." },
+  { en: "The conditions are good.", de: "Die Bedingungen sind gut." },
+  { en: "I do not know the conditions.", de: "Ich kenne die Bedingungen nicht." },
+  { en: "The container is full.", de: "Der Behälter ist voll." },
+  { en: "Please put the water into the container.", de: "Bitte stell das Wasser in den Behälter." },
+  { en: "The car is damaged.", de: "Das Auto ist beschädigt." },
+  { en: "The bag was damaged.", de: "Die Tasche wurde beschädigt." },
+  { en: "I am busy right now.", de: "Ich bin gerade beschäftigt." },
+  { en: "She is busy all day.", de: "Sie ist den ganzen Tag beschäftigt." },
+  { en: "I know about it.", de: "Ich weiß Bescheid." },
+  { en: "Please let me know.", de: "Gib mir bitte Bescheid." },
+  { en: "We decided that.", de: "Wir haben das beschlossen." },
+  { en: "It was decided yesterday.", de: "Es wurde gestern beschlossen." },
+  { en: "The seat is occupied.", de: "Der Platz ist besetzt." },
+  { en: "The line is busy.", de: "Die Leitung ist besetzt." },
+  { en: "I passed the exam.", de: "Ich habe die Prüfung bestanden." },
+  { en: "The problem existed for a long time.", de: "Das Problem hat lange bestanden." },
+  { en: "I want to pass the exam.", de: "Ich will die Prüfung bestehen." },
+  { en: "The house still exists.", de: "Das Haus besteht noch." },
+  { en: "The team consists of five people.", de: "Das Team besteht aus fünf Leuten." },
+  { en: "The problem still exists.", de: "Das Problem besteht noch." },
+  { en: "The price is ten euros.", de: "Der Preis beträgt zehn Euro." },
+  { en: "The time is two hours.", de: "Die Zeit beträgt zwei Stunden." },
+  { en: "He gets a lot of electricity.", de: "Er bezieht viel Strom." },
+  { en: "The word refers to the topic.", de: "Das Wort bezieht sich auf das Thema." },
+  { en: "That stands there without connection.", de: "Das steht ohne Bezug da." },
+  { en: "I refer to your letter.", de: "Ich nehme Bezug auf deinen Brief." },
+  { en: "I am thinking about it.", de: "Ich denke daran." },
+  { en: "By that I see the difference.", de: "Daran sehe ich den Unterschied." },
+  { en: "There are many kinds of reasons.", de: "Es gibt vielerlei Gründe." },
+  { en: "We have many kinds of problems.", de: "Wir haben vielerlei Probleme." },
+  { en: "The dog is locked in the room.", de: "Der Hund ist im Zimmer eingesperrt." },
+  { en: "I felt trapped.", de: "Ich fühlte mich eingesperrt." },
+  { en: "I kindly request an answer.", de: "Ich erbitte eine Antwort." },
+  { en: "I kindly request your help.", de: "Ich erbitte Ihre Hilfe." },
+  { en: "That was inappropriate.", de: "Das war unpassend." },
+  { en: "His clothing is inappropriate here.", de: "Seine Kleidung ist hier unpassend." },
+  { en: "That is nonsense.", de: "Das ist Quatsch." },
+  { en: "Do not talk nonsense.", de: "Rede keinen Quatsch." },
+  { en: "He is obviously tired.", de: "Er ist offensichtlich müde." },
+  { en: "That was obviously a mistake.", de: "Das war offensichtlich ein Fehler." },
+  { en: "I am fed up with it.", de: "Ich hab es satt." },
+  { en: "I am fed up with waiting.", de: "Ich hab es satt, zu warten." },
+  { en: "I have to get used to it.", de: "Ich muss mich daran gewöhnen." },
+  { en: "He is getting used to the cold.", de: "Er gewöhnt sich an die Kälte." },
+  { en: "Try to pull yourself together.", de: "Versuch, dich zusammenzureißen." },
+  { en: "It is hard to pull yourself together.", de: "Es ist schwer, sich zusammenzureißen." },
+  { en: "We have to turn back now.", de: "Wir müssen jetzt umkehren." },
+  { en: "He turned back halfway.", de: "Er kehrte auf halbem Weg um." },
+  { en: "The name was recorded.", de: "Der Name wurde erfasst." },
+  { en: "Fear gripped him.", de: "Die Angst hat ihn erfasst." },
+  { en: "I see a dark figure.", de: "Ich sehe eine dunkle Gestalt." },
+  { en: "The house is taking shape.", de: "Das Haus nimmt Gestalt an." },
+  { en: "He drank water.", de: "Er trank Wasser." },
+  { en: "She drank her coffee quickly.", de: "Sie trank schnell ihren Kaffee." },
+  { en: "The old woman is kind.", de: "Die alte Frau ist gütig." },
+  { en: "He was always kind to me.", de: "Er war immer gütig zu mir." },
+  { en: "The doors have new locks.", de: "Die Türen haben neue Schlösser." },
+  { en: "We visit old castles.", de: "Wir besuchen alte Schlösser." },
+  { en: "Please go forward.", de: "Geh bitte vorwärts." },
+  { en: "We have to look forward.", de: "Wir müssen vorwärts schauen." },
+  { en: "I admire your courage.", de: "Ich bewundere deinen Mut." },
+  { en: "Many people admire this picture.", de: "Viele Leute bewundern dieses Bild." },
+
+];
+
+const SOURCE_LANG = "en";
+const TARGET_LANG = "de";
+const TARGET_RATES = [0.75, 0.85, 1];
+const REPEAT_GAP_MS = 1000;
+
+const synth = window.speechSynthesis;
+const langToBCP = { en:["en-US","en-GB","en"], de:["de-DE","de"] };
+const blockSelect = document.getElementById("blockSelect");
+const scheduleModeSel = document.getElementById("scheduleMode");
+const shuffleBlockChk = document.getElementById("shuffleBlock");
+const sourceRepeatSel = document.getElementById("sourceRepeat");
+const targetRepeatSel = document.getElementById("targetRepeat");
+const thinkDelayInput = document.getElementById("thinkDelay");
+const nextDelayInput = document.getElementById("nextDelay");
+const sourceVoiceSel = document.getElementById("sourceVoice");
+const targetVoiceSel = document.getElementById("targetVoice");
+const targetSizeInput = document.getElementById("targetSize");
+const targetSizeValue = document.getElementById("targetSizeValue");
+const autoModeChk = document.getElementById("autoMode");
+const metaEl = document.getElementById("meta");
+const sourceTextEl = document.getElementById("sourceText");
+const targetTextEl = document.getElementById("targetText");
+const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const replayBtn = document.getElementById("replayBtn");
+
+let voices = [];
+let blockPhrases = [];
+let schedule = [];
+let stepIndex = 0;
+let showingTarget = false;
+let paused = false;
+let timer = null;
+let speechToken = 0;
+
+const GENERAL_VOICE_PREFERENCE = [/google/i];
+const LANGUAGE_VOICE_PREFERENCE = {
+  en: [/microsoft\s+guy/i],
+  de: [/microsoft\s+ingrid/i]
+};
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function updateTargetSize() {
+  const size = clampNumber(targetSizeInput.value, 20, 64, 30);
+  targetSizeInput.value = String(size);
+  targetSizeValue.textContent = String(size);
+  document.documentElement.style.setProperty("--target-size", size + "px");
+}
+
+function populateBlocks() {
+  blockSelect.innerHTML = "";
+  const blockCount = Math.ceil(PRELOADED_PHRASES.length / 20);
+  for (let i = 0; i < blockCount; i += 1) {
+    const start = i * 20 + 1;
+    const end = Math.min((i + 1) * 20, PRELOADED_PHRASES.length);
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = `Block ${i + 1}: ${start}-${end}`;
+    blockSelect.appendChild(opt);
+  }
+}
+
+function shufflePhrases(items) {
+  const copy = items.slice();
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function getSelectedBlock() {
+  const blockIndex = Number(blockSelect.value) || 0;
+  const start = blockIndex * 20;
+  const selected = PRELOADED_PHRASES.slice(start, start + 20).map((phrase, index) => ({
+    ...phrase,
+    globalIndex: start + index + 1,
+    originalBlockIndex: index + 1
+  }));
+  const ordered = shuffleBlockChk.checked ? shufflePhrases(selected) : selected;
+  return ordered.map((phrase, index) => ({
+    ...phrase,
+    blockIndex: index + 1
+  }));
+}
+
+function addRange(items, start, end) {
+  const from = Math.max(1, start);
+  const to = Math.min(items.length, end);
+  const result = [];
+  for (let i = from; i <= to; i += 1) result.push(i - 1);
+  return result;
+}
+
+function buildIntensiveSchedule(items) {
+  if (!items.length) return [];
+  const order = [];
+  const pushRange = (start, end) => order.push(...addRange(items, start, end));
+
+  for (let end = 5; end <= Math.min(10, items.length); end += 1) {
+    pushRange(Math.max(1, end - 5), end);
+  }
+  if (items.length >= 10) pushRange(1, 10);
+
+  for (let end = 11; end <= Math.min(15, items.length); end += 1) {
+    pushRange(Math.max(1, end - 5), end);
+  }
+  if (items.length >= 15) pushRange(6, 15);
+
+  for (let end = 16; end <= items.length; end += 1) {
+    pushRange(Math.max(1, end - 5), end);
+  }
+  if (items.length > 15) pushRange(11, items.length);
+  if (items.length > 10) pushRange(1, Math.min(10, items.length));
+  if (items.length > 10) pushRange(11, items.length);
+
+  return order.map(phraseIndex => items[phraseIndex]);
+}
+
+function buildReminderSchedule(items) {
+  if (!items.length) return [];
+  const order = [];
+  const pushRange = (start, end) => order.push(...addRange(items, start, end));
+
+  pushRange(1, 5);
+  pushRange(6, 10);
+  if (items.length > 5) pushRange(1, 10);
+
+  pushRange(11, 15);
+  pushRange(16, 20);
+  if (items.length > 10) pushRange(11, 20);
+
+  if (items.length > 10) {
+    pushRange(1, 10);
+    pushRange(11, 20);
+  } else {
+    pushRange(1, items.length);
+  }
+
+  return order.map(phraseIndex => items[phraseIndex]);
+}
+
+function buildReviewSchedule(items) {
+  return scheduleModeSel.value === "reminder"
+    ? buildReminderSchedule(items)
+    : buildIntensiveSchedule(items);
+}
+
+function populateVoices() {
+  voices = synth.getVoices().slice().sort((a, b) => (a.lang || "").localeCompare(b.lang || "") || (a.name || "").localeCompare(b.name || ""));
+  updateVoiceSelect(sourceVoiceSel, SOURCE_LANG);
+  updateVoiceSelect(targetVoiceSel, TARGET_LANG);
+}
+
+function updateVoiceSelect(select, langCode) {
+  const prefs = langToBCP[langCode].map(value => value.toLowerCase());
+  const list = voices.filter(voice => prefs.some(pref => (voice.lang || "").toLowerCase().startsWith(pref)));
+  select.innerHTML = "";
+  const autoOpt = document.createElement("option");
+  autoOpt.value = "auto";
+  autoOpt.textContent = list.length ? `Auto (${langCode})` : "Auto";
+  select.appendChild(autoOpt);
+  list.forEach(voice => {
+    const opt = document.createElement("option");
+    opt.value = `${voice.name}||${voice.lang}`;
+    opt.textContent = `${voice.name} - ${voice.lang}`;
+    select.appendChild(opt);
+  });
+  select.disabled = list.length === 0;
+}
+
+function findPreferredVoice(list, langCode) {
+  const patterns = [...GENERAL_VOICE_PREFERENCE, ...(LANGUAGE_VOICE_PREFERENCE[langCode] || [])];
+  for (const pattern of patterns) {
+    const match = list.find(voice => pattern.test(voice.name || ""));
+    if (match) return match;
+  }
+  return null;
+}
+
+function pickVoice(langCode) {
+  const prefs = langToBCP[langCode].map(value => value.toLowerCase());
+  const matches = voices.filter(voice => prefs.some(pref => (voice.lang || "").toLowerCase().startsWith(pref)));
+  return findPreferredVoice(matches, langCode) || matches[0] || voices[0] || null;
+}
+
+function findVoice(select, langCode) {
+  if (!select.value || select.value === "auto") return pickVoice(langCode);
+  const [name, lang] = select.value.split("||");
+  return voices.find(voice => voice.name === name && voice.lang === lang) || pickVoice(langCode);
+}
+
+function clearTimer() {
+  if (timer) clearTimeout(timer);
+  timer = null;
+}
+
+function cancelSpeech() {
+  speechToken += 1;
+  synth.cancel();
+}
+
+function speak(text, langCode, repeat, voiceSelect, rates = null) {
+  const token = ++speechToken;
+  const repeats = clampNumber(repeat, 1, 5, 1);
+  const selectedVoice = findVoice(voiceSelect, langCode);
+  return new Promise(resolve => {
+    let left = repeats;
+    const speakNext = () => {
+      if (token !== speechToken || left <= 0) { resolve(); return; }
+      const currentRepeatIndex = repeats - left;
+      left -= 1;
+      const cleanText = String(text || "").trim();
+      if (!cleanText) { resolve(); return; }
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = langToBCP[langCode][0];
+      if (Array.isArray(rates) && rates[currentRepeatIndex]) utterance.rate = rates[currentRepeatIndex];
+      if (selectedVoice) utterance.voice = selectedVoice;
+      utterance.onend = () => left > 0 ? setTimeout(speakNext, REPEAT_GAP_MS) : resolve();
+      utterance.onerror = resolve;
+      synth.speak(utterance);
+    };
+    speakNext();
+  });
+}
+
+function currentPhrase() {
+  return schedule[stepIndex] || null;
+}
+
+function render() {
+  const phrase = currentPhrase();
+  if (!phrase) {
+    sourceTextEl.textContent = "No phrases loaded";
+    targetTextEl.textContent = "";
+    targetTextEl.classList.add("hidden");
+    metaEl.textContent = "";
+    return;
+  }
+
+  sourceTextEl.textContent = phrase.en;
+  targetTextEl.textContent = phrase.de;
+  targetTextEl.classList.toggle("hidden", !showingTarget);
+  const blockNumber = (Number(blockSelect.value) || 0) + 1;
+  metaEl.textContent = `Block ${blockNumber} phrase ${phrase.blockIndex}/${blockPhrases.length} - Global phrase ${phrase.globalIndex}/${PRELOADED_PHRASES.length} - Step ${stepIndex + 1}/${schedule.length}`;
+}
+
+function setControlsEnabled(enabled) {
+  pauseBtn.disabled = !enabled;
+  prevBtn.disabled = !enabled;
+  nextBtn.disabled = !enabled;
+  replayBtn.disabled = !enabled;
+}
+
+function scheduleAfter(seconds, callback) {
+  clearTimer();
+  timer = setTimeout(callback, seconds * 1000);
+}
+
+function playCurrentFromSource() {
+  const phrase = currentPhrase();
+  if (!phrase) return;
+  paused = false;
+  showingTarget = false;
+  render();
+  cancelSpeech();
+  speak(phrase.en, SOURCE_LANG, Number(sourceRepeatSel.value), sourceVoiceSel).then(() => {
+    if (paused || !autoModeChk.checked) return;
+    scheduleAfter(clampNumber(thinkDelayInput.value, 1, 30, 8), playTarget);
+  });
+}
+
+function playTarget() {
+  const phrase = currentPhrase();
+  if (!phrase) return;
+  showingTarget = true;
+  render();
+  cancelSpeech();
+  speak(phrase.de, TARGET_LANG, Number(targetRepeatSel.value), targetVoiceSel, TARGET_RATES).then(() => {
+    if (paused || !autoModeChk.checked) return;
+    scheduleAfter(clampNumber(nextDelayInput.value, 1, 30, 5), nextStep);
+  });
+}
+
+function nextStep() {
+  if (!schedule.length) return;
+  if (stepIndex >= schedule.length - 1) {
+    const nextBlockIndex = (Number(blockSelect.value) || 0) + 1;
+    if (nextBlockIndex < blockSelect.options.length) {
+      blockSelect.value = String(nextBlockIndex);
+      blockPhrases = getSelectedBlock();
+      schedule = buildReviewSchedule(blockPhrases);
+      stepIndex = 0;
+      showingTarget = false;
+      paused = false;
+      setControlsEnabled(schedule.length > 0);
+      playCurrentFromSource();
+      return;
+    }
+    paused = true;
+    clearTimer();
+    autoModeChk.checked = false;
+    showingTarget = true;
+    render();
+    return;
+  }
+  stepIndex += 1;
+  playCurrentFromSource();
+}
+
+function previousStep() {
+  if (!schedule.length) return;
+  stepIndex = Math.max(0, stepIndex - 1);
+  playCurrentFromSource();
+}
+
+function startSession() {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingTarget = false;
+  paused = false;
+  setControlsEnabled(schedule.length > 0);
+  if (autoModeChk.checked) playCurrentFromSource();
+  else render();
+}
+
+startBtn.addEventListener("click", startSession);
+pauseBtn.addEventListener("click", () => {
+  paused = true;
+  clearTimer();
+  cancelSpeech();
+});
+prevBtn.addEventListener("click", previousStep);
+nextBtn.addEventListener("click", nextStep);
+replayBtn.addEventListener("click", playCurrentFromSource);
+blockSelect.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingTarget = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+scheduleModeSel.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingTarget = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+shuffleBlockChk.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingTarget = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+autoModeChk.addEventListener("change", () => {
+  clearTimer();
+  if (autoModeChk.checked && schedule.length) playCurrentFromSource();
+});
+targetSizeInput.addEventListener("input", updateTargetSize);
+
+if (typeof synth.onvoiceschanged !== "undefined") synth.onvoiceschanged = populateVoices;
+populateBlocks();
+populateVoices();
+updateTargetSize();
+blockPhrases = getSelectedBlock();
+schedule = buildReviewSchedule(blockPhrases);
+render();
+</script>
+</body>
+</html>
