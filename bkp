@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>DE-JA Phrase SRS</title>
+<style>
+  :root { --bg:#0b0b0c; --fg:#f7f7fa; --muted:#9aa0a6; --acc:#4c8bf5; --surface:#151821; --surface-hi:#1f2330; --ja-size:1.9rem; }
+  * { box-sizing:border-box; }
+  body { font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+         background:var(--bg); color:var(--fg); margin:0; min-height:100vh;
+         display:flex; justify-content:center; }
+  .app { width:min(760px,100%); padding:clamp(18px,4vw,32px); display:flex; flex-direction:column; gap:20px; }
+  h1 { margin:0; text-align:center; font-size:clamp(1.6rem,5vw,2.4rem); }
+  .panel { background:var(--surface); border:1px solid rgba(255,255,255,0.08); border-radius:8px;
+           padding:clamp(16px,4vw,26px); box-shadow:0 18px 40px rgba(0,0,0,0.45); display:flex; flex-direction:column; gap:14px; }
+  label { font-weight:600; font-size:0.95rem; }
+  select, input, button { width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.08);
+                          padding:10px 14px; font-size:1rem; background:var(--surface-hi); color:var(--fg); }
+  input[type="range"] { appearance:none; -webkit-appearance:none; height:38px; padding:0 4px; background:transparent; border:none; cursor:pointer; }
+  input[type="range"]::-webkit-slider-runnable-track { height:8px; border-radius:8px; background:linear-gradient(90deg,#4c8bf5,#6cc4ff); }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; margin-top:-7px; border-radius:50%; border:2px solid #ffffff; background:#f7f7fa; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
+  input[type="range"]::-moz-range-track { height:8px; border-radius:8px; background:linear-gradient(90deg,#4c8bf5,#6cc4ff); }
+  input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:50%; border:2px solid #ffffff; background:#f7f7fa; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
+  button.primary { background:linear-gradient(135deg,rgba(76,139,245,0.93),rgba(90,160,255,0.88)); border:none;
+                   box-shadow:0 12px 28px rgba(76,139,245,0.35); font-weight:600; cursor:pointer; }
+  button.secondary { background:rgba(24,28,40,0.9); font-weight:600; cursor:pointer; }
+  button:disabled { opacity:0.5; cursor:not-allowed; }
+  .phrase { min-height:260px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            text-align:center; gap:18px; padding:30px; border-radius:8px; background:linear-gradient(160deg,#191d29,#10121a);
+            box-shadow:0 20px 45px rgba(0,0,0,0.5); }
+  .de { font-size:clamp(1.45rem,5vw,2rem); font-weight:700; line-height:1.25; }
+  .ja { font-size:var(--ja-size); font-weight:700; line-height:1.35; color:#d8e6ff; }
+  .placeholder { color:var(--muted); }
+  .meta { font-size:0.95rem; color:var(--muted); text-align:center; line-height:1.45; }
+  .controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>DE-JA Phrase SRS</h1>
+
+  <section class="panel">
+    <div class="controls">
+      <div>
+        <label>Block</label>
+        <select id="blockSelect"></select>
+      </div>
+      <div>
+        <label>Repetition mode</label>
+        <select id="scheduleMode">
+          <option value="intensive" selected>Intensive - new stuff</option>
+          <option value="reminder">Reminder - lighter review</option>
+        </select>
+      </div>
+      <div>
+        <label><input type="checkbox" id="shuffleBlock"/> Shuffle group before playing</label>
+      </div>
+      <div>
+        <label>German repeats</label>
+        <select id="deRepeat">
+          <option value="1" selected>1x</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+        </select>
+      </div>
+      <div>
+        <label>Japanese repeats</label>
+        <select id="jaRepeat">
+          <option value="1">1x</option>
+          <option value="2">2x</option>
+          <option value="3" selected>3x</option>
+        </select>
+      </div>
+      <div>
+        <label>Think time (sec)</label>
+        <input id="thinkDelay" type="number" min="1" max="30" value="8"/>
+      </div>
+      <div>
+        <label>Next phrase after (sec)</label>
+        <input id="nextDelay" type="number" min="1" max="30" value="5"/>
+      </div>
+      <div>
+        <label>Voice (German)</label>
+        <select id="deVoice" disabled></select>
+      </div>
+      <div>
+        <label>Voice (Japanese)</label>
+        <select id="jaVoice" disabled></select>
+      </div>
+      <div>
+        <label for="jaSize">Japanese size: <span id="jaSizeValue">30</span>px</label>
+        <input id="jaSize" type="range" min="20" max="64" value="30"/>
+      </div>
+    </div>
+    <label><input type="checkbox" id="autoMode" checked/> Auto mode</label>
+    <p style="font-size:0.9rem;color:var(--muted);margin:0;">Pick a 20-phrase block and a repetition mode. Intensive is for new material; Reminder is a lighter review. Nothing is saved.</p>
+  </section>
+
+  <section>
+    <div class="meta" id="meta">Press Start.</div>
+    <div class="phrase">
+      <div class="de" id="deText">Waiting...</div>
+      <div class="ja hidden" id="jaText"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <button id="startBtn" class="primary">Start</button>
+      <button id="pauseBtn" class="secondary" disabled>Pause</button>
+      <button id="prevBtn" class="secondary" disabled>Previous step</button>
+      <button id="nextBtn" class="secondary" disabled>Next step</button>
+      <button id="replayBtn" class="secondary" disabled>Replay current</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// Add as many phrases as you want. Blocks are generated automatically in groups of 20.
+const PRELOADED_PHRASES = [
+  { de: "Guten Tag", ja: "こんにちは" },
+  { de: "Guten Morgen", ja: "おはようございます" },
+  { de: "Guten Abend", ja: "こんばんは" },
+  { de: "Gute Nacht", ja: "おやすみなさい" },
+  { de: "Auf Wiedersehen", ja: "さようなら" },
+  { de: "Bis später", ja: "またね" },
+  { de: "Danke", ja: "ありがとうございます" },
+  { de: "Gern geschehen", ja: "どういたしまして" },
+  { de: "Entschuldigung", ja: "すみません" },
+  { de: "Es tut mir leid", ja: "ごめんなさい" },
+  { de: "Ja", ja: "はい" },
+  { de: "Nein", ja: "いいえ" },
+  { de: "Vielleicht", ja: "たぶん" },
+  { de: "Natürlich", ja: "もちろん" },
+  { de: "Ich verstehe", ja: "わかります" },
+  { de: "Ich verstehe nicht", ja: "わかりません" },
+  { de: "Ich weiß nicht", ja: "しりません" },
+  { de: "Es ist in Ordnung", ja: "だいじょうぶです" },
+  { de: "Wie geht es dir?", ja: "げんきですか" },
+  { de: "Mir geht es gut", ja: "げんきです" },
+  { de: "Wie heißt du?", ja: "なまえはなんですか" },
+  { de: "Ich heiße Ingo", ja: "わたしのなまえはインゴです" },
+  { de: "Freut mich", ja: "はじめまして" },
+  { de: "Ich freue mich auf unsere Bekanntschaft", ja: "よろしくおねがいします" },
+  { de: "Woher kommst du?", ja: "どこからきましたか" },
+  { de: "Ich wohne in Deutschland", ja: "ドイツにすんでいます" },
+  { de: "Ich komme aus Brasilien", ja: "ブラジルからきました" },
+  { de: "Ich lerne Japanisch", ja: "にほんごをべんきょうしています" },
+  { de: "Ich spreche Deutsch", ja: "ドイツごをはなします" },
+  { de: "Ich spreche Englisch", ja: "えいごをはなします" },
+  { de: "Noch einmal, bitte", ja: "もういちどおねがいします" },
+  { de: "Bitte langsam", ja: "ゆっくりおねがいします" },
+  { de: "Wie sagt man das auf Japanisch?", ja: "これをにほんごでなんといいますか" },
+  { de: "Was ist das?", ja: "これはなんですか" },
+  { de: "Wo ist die Toilette?", ja: "トイレはどこですか" },
+  { de: "Wo ist der Bahnhof?", ja: "えきはどこですか" },
+  { de: "Bitte helfen Sie mir", ja: "たすけてください" },
+  { de: "Ist alles in Ordnung?", ja: "だいじょうぶですか" },
+  { de: "Wie viel kostet das?", ja: "いくらですか" },
+  { de: "Es ist teuer", ja: "たかいです" },
+  { de: "Es ist billig", ja: "やすいです" },
+  { de: "Bitte Wasser", ja: "みずをください" },
+  { de: "Bitte einen Kaffee", ja: "コーヒーをください" },
+  { de: "Bitte einen Tee", ja: "おちゃをください" },
+  { de: "Bitte die Speisekarte", ja: "メニューをください" },
+  { de: "Das bitte", ja: "これをください" },
+  { de: "Es ist lecker", ja: "おいしいです" },
+  { de: "Ich habe Hunger", ja: "おなかがすきました" },
+  { de: "Ich habe Durst", ja: "のどがかわきました" },
+  { de: "Ich möchte essen", ja: "たべたいです" },
+  { de: "Ich möchte trinken", ja: "のみたいです" },
+  { de: "Ich möchte gehen", ja: "いきたいです" },
+  { de: "Ich möchte sehen", ja: "みたいです" },
+  { de: "Ich gehe nach Hause", ja: "かえります" },
+  { de: "Ich gehe", ja: "いきます" },
+  { de: "Ich komme", ja: "きます" },
+  { de: "Ich warte", ja: "まちます" },
+  { de: "Ich setze mich", ja: "すわります" },
+  { de: "Ich stehe auf", ja: "たちます" },
+  { de: "Ich schlafe", ja: "ねます" },
+  { de: "Ich stehe auf", ja: "おきます" },
+  { de: "Ich esse", ja: "たべます" },
+  { de: "Ich trinke", ja: "のみます" },
+  { de: "Ich sehe", ja: "みます" },
+  { de: "Ich höre", ja: "ききます" },
+  { de: "Ich lese", ja: "よみます" },
+  { de: "Ich schreibe", ja: "かきます" },
+  { de: "Ich spreche", ja: "はなします" },
+  { de: "Ich kaufe", ja: "かいます" },
+  { de: "Ich mache", ja: "つくります" },
+  { de: "Es gibt", ja: "あります" },
+  { de: "Da ist", ja: "います" },
+  { de: "Heute ist es heiß", ja: "きょうはあついです" },
+  { de: "Heute ist es kalt", ja: "きょうはさむいです" },
+  { de: "Heute ist schönes Wetter", ja: "きょうはいいてんきです" },
+  { de: "Es regnet", ja: "あめです" },
+  { de: "Es schneit", ja: "ゆきです" },
+  { de: "Wie spät ist es jetzt?", ja: "いまなんじですか" },
+  { de: "Es ist ein Uhr", ja: "いちじです" },
+  { de: "Es ist zwei Uhr", ja: "にじです" },
+  { de: "Hast du morgen Zeit?", ja: "あしたひまですか" },
+  { de: "Heute bin ich beschäftigt", ja: "きょうはいそがしいです" },
+  { de: "Morgen habe ich frei", ja: "あしたはやすみです" },
+  { de: "Wollen wir zusammen gehen?", ja: "いっしょにいきませんか" },
+  { de: "Ja, gehen wir", ja: "はい、いきましょう" },
+  { de: "Entschuldigung, es geht nicht", ja: "すみません、むりです" },
+  { de: "Später", ja: "あとで" },
+  { de: "Jetzt", ja: "いま" },
+  { de: "Heute", ja: "きょう" },
+  { de: "Morgen", ja: "あした" },
+  { de: "Gestern", ja: "きのう" },
+  { de: "Hier", ja: "ここ" },
+  { de: "Dort", ja: "そこ" },
+  { de: "Da drüben", ja: "あそこ" },
+  { de: "Mein Zuhause", ja: "うち" },
+  { de: "Schule", ja: "がっこう" },
+  { de: "Arbeit", ja: "しごと" },
+  { de: "Freund", ja: "ともだち" },
+  { de: "Familie", ja: "かぞく" },
+  { de: "Ich bin müde", ja: "わたしはつかれました" },
+  { de: "Es macht Spaß", ja: "たのしいです" },
+  { de: "Ich bin traurig", ja: "かなしいです" },
+  { de: "Ich bin froh", ja: "うれしいです" },
+  { de: "Ich mag es sehr", ja: "だいすきです" },
+  { de: "Ich mag es", ja: "すきです" },
+  { de: "Ich mag es nicht", ja: "きらいです" },
+  { de: "Bis morgen", ja: "またあした" },
+  { de: "Ich mag Äpfel", ja: "わたしはりんごがすきです" },
+  { de: "Ich mag rote Äpfel", ja: "わたしはあかいりんごがすきです" },
+  { de: "Ich mag süße rote Äpfel", ja: "わたしはあまいあかいりんごがすきです" },
+  { de: "Er kauft Kaffee", ja: "かれはコーヒーをかいます" },
+  { de: "Er kauft heißen Kaffee", ja: "かれはあついコーヒーをかいます" },
+  { de: "Er kauft morgens heißen Kaffee", ja: "かれはあさにあついコーヒーをかいます" },
+  { de: "Ich wohne in einem Haus", ja: "わたしはいえにすんでいます" },
+  { de: "Ich wohne in einem kleinen Haus", ja: "わたしはちいさいいえにすんでいます" },
+  { de: "Ich wohne in einem kleinen Haus in einer ruhigen Stadt", ja: "わたしはしずかなまちのちいさいいえにすんでいます" },
+  { de: "Ich lese ein Buch", ja: "わたしはほんをよみます" },
+  { de: "Ich lese ein interessantes Buch", ja: "わたしはおもしろいほんをよみます" },
+  { de: "Ich lese abends ein interessantes Buch", ja: "わたしはよるにおもしろいほんをよみます" },
+  { de: "Sie trinkt Wasser", ja: "かのじょはみずをのみます" },
+  { de: "Sie trinkt kaltes Wasser", ja: "かのじょはつめたいみずをのみます" },
+  { de: "Sie trinkt im Park kaltes Wasser", ja: "かのじょはこうえんでつめたいみずをのみます" },
+  { de: "Ich esse Brot", ja: "ぼくはパンをたべます" },
+  { de: "Ich esse weißes Brot", ja: "ぼくはしろいパンをたべます" },
+  { de: "Ich esse zum Frühstück weißes Brot", ja: "ぼくはあさごはんにしろいパンをたべます" },
+  { de: "Wir schauen einen Film", ja: "わたしたちはえいがをみます" },
+  { de: "Wir schauen einen japanischen Film", ja: "わたしたちはにほんのえいがをみます" },
+  { de: "Wir schauen am Wochenende einen langen japanischen Film", ja: "わたしたちはしゅうまつにながいにほんのえいがをみます" },
+  { de: "Ich lerne Japanisch", ja: "わたしはにほんごをべんきょうします" },
+  { de: "Ich lerne jeden Tag Japanisch", ja: "わたしはまいにちにほんごをべんきょうします" },
+  { de: "Ich lerne jeden Tag zu Hause Japanisch", ja: "わたしはうちでまいにちにほんごをべんきょうします" },
+  { de: "Mein Freund geht zur Schule", ja: "ともだちはがっこうへいきます" },
+  { de: "Mein Freund geht früh zur Schule", ja: "ともだちははやくがっこうへいきます" },
+  { de: "Mein Freund geht jeden Morgen früh zur Schule", ja: "ともだちはまいあさはやくがっこうへいきます" },
+  { de: "Ich höre Musik", ja: "わたしはおんがくをききます" },
+  { de: "Ich höre ruhige Musik", ja: "わたしはしずかなおんがくをききます" },
+  { de: "Ich höre im Zimmer ruhige Musik", ja: "わたしはへやでしずかなおんがくをききます" },
+  { de: "Sie spielen Fußball", ja: "かれらはサッカーをします" },
+  { de: "Sie spielen im Park Fußball", ja: "かれらはこうえんでサッカーをします" },
+  { de: "Sie spielen mittags im Park Fußball", ja: "かれらはひるにこうえんでサッカーをします" },
+  { de: "Ich schreibe einen Brief", ja: "わたしはてがみをかきます" },
+  { de: "Ich schreibe einen langen Brief", ja: "わたしはながいてがみをかきます" },
+  { de: "Ich schreibe einem Freund einen langen Brief", ja: "わたしはともだちにながいてがみをかきます" },
+  { de: "Da ist eine Katze", ja: "ねこがいます" },
+  { de: "Da ist eine schwarze Katze", ja: "くろいねこがいます" },
+  { de: "Im Garten ist eine schwarze Katze", ja: "にわにくろいねこがいます" },
+  { de: "Ein Hund läuft", ja: "いぬがはしります" },
+  { de: "Ein kleiner Hund läuft", ja: "ちいさいいぬがはしります" },
+  { de: "Im Park läuft ein kleiner Hund", ja: "こうえんでちいさいいぬがはしります" },
+  { de: "Ich fahre mit dem Auto", ja: "わたしはくるまでいきます" },
+  { de: "Ich fahre mit dem Auto zur Arbeit", ja: "わたしはしごとにくるまでいきます" },
+  { de: "Ich fahre jeden Tag mit dem Auto zur Arbeit", ja: "わたしはまいにちしごとにくるまでいきます" },
+  { de: "Meine Mutter kocht", ja: "はははりょうりをします" },
+  { de: "Meine Mutter kocht leckeres Essen", ja: "はははおいしいりょうりをします" },
+  { de: "Meine Mutter kocht leckeres Abendessen", ja: "はははばんごはんにおいしいりょうりをします" },
+  { de: "Mein Bruder telefoniert", ja: "あにはでんわをします" },
+  { de: "Mein Bruder ruft einen Freund an", ja: "あにはともだちにでんわをします" },
+  { de: "Mein Bruder ruft abends einen Freund an", ja: "あにはよるにともだちにでんわをします" },
+  { de: "Ich mache ein Foto", ja: "わたしはしゃしんをとります" },
+  { de: "Ich mache ein schönes Foto", ja: "わたしはきれいなしゃしんをとります" },
+  { de: "Ich mache in den Bergen ein schönes Foto", ja: "わたしはやまできれいなしゃしんをとります" },
+  { de: "Die Kinder spielen", ja: "こどもたちはあそびます" },
+  { de: "Die Kinder spielen draußen", ja: "こどもたちはそとであそびます" },
+  { de: "Die Kinder spielen fröhlich im Park", ja: "こどもたちはこうえんでたのしくあそびます" },
+  { de: "Ich warte auf einen Freund", ja: "わたしはともだちをまちます" },
+  { de: "Ich warte am Bahnhof auf einen Freund", ja: "わたしはえきでともだちをまちます" },
+  { de: "Ich warte am Nachmittag am Bahnhof auf einen Freund", ja: "わたしはごごにえきでともだちをまちます" },
+  { de: "Sie spricht Deutsch", ja: "かのじょはドイツごをはなします" },
+  { de: "Sie spricht gut Deutsch", ja: "かのじょはじょうずにドイツごをはなします" },
+  { de: "Sie spricht in der Schule gut Deutsch", ja: "かのじょはがっこうでじょうずにドイツごをはなします" },
+  { de: "Mein Vater liest die Zeitung", ja: "ちちはしんぶんをよみます" },
+  { de: "Mein Vater liest morgens die Zeitung", ja: "ちちはあさにしんぶんをよみます" },
+  { de: "Mein Vater liest morgens in der Küche die Zeitung", ja: "ちちはキッチンであさにしんぶんをよみます" },
+  { de: "Ich kaufe im Laden ein", ja: "わたしはみせでかいものをします" },
+  { de: "Ich kaufe im Supermarkt ein", ja: "わたしはスーパーでかいものをします" },
+  { de: "Ich kaufe nach der Arbeit im Supermarkt ein", ja: "わたしはしごとのあとでスーパーでかいものをします" },
+  { de: "Der Lehrer stellt eine Frage", ja: "せんせいはしつもんをします" },
+  { de: "Der Lehrer stellt eine einfache Frage", ja: "せんせいはやさしいしつもんをします" },
+  { de: "Der Lehrer stellt in der Klasse eine einfache Frage", ja: "せんせいはクラスでやさしいしつもんをします" },
+  { de: "Ich stehe früh auf", ja: "わたしははやくおきます" },
+  { de: "Ich stehe um sechs Uhr früh auf", ja: "わたしはろくじにはやくおきます" },
+  { de: "Ich stehe jeden Morgen um sechs Uhr früh auf", ja: "わたしはまいあさろくじにはやくおきます" },
+  { de: "Meine Schwester singt", ja: "いもうとはうたいます" },
+  { de: "Meine Schwester singt schön", ja: "いもうとはきれいにうたいます" },
+  { de: "Meine Schwester singt schön im Zimmer", ja: "いもうとはへやできれいにうたいます" },
+  { de: "Ich esse kein Fleisch", ja: "わたしはにくをたべません" },
+  { de: "Ich esse zum Abendessen kein Fleisch", ja: "わたしはばんごはんににくをたべません" },
+  { de: "Ich esse heute zum Abendessen kein Fleisch", ja: "わたしはきょうのばんごはんににくをたべません" },
+  { de: "Er fährt nach Japan", ja: "かれはにほんへいきます" },
+  { de: "Er fährt nächstes Jahr nach Japan", ja: "かれはらいねんににほんへいきます" },
+  { de: "Er fährt nächstes Jahr mit einem Freund nach Japan", ja: "かれはともだちとらいねんににほんへいきます" },
+  { de: "Ich putze das Zimmer", ja: "わたしはへやをそうじします" },
+  { de: "Ich putze mein Zimmer", ja: "わたしはじぶんのへやをそうじします" },
+  { de: "Ich putze am Samstag mein Zimmer", ja: "わたしはどようびにじぶんのへやをそうじします" },
+  { de: "Sie wäscht Kleidung", ja: "かのじょはふくをあらいます" },
+  { de: "Sie wäscht weiße Kleidung", ja: "かのじょはしろいふくをあらいます" },
+  { de: "Sie wäscht weiße Kleidung in der Waschmaschine", ja: "かのじょはせんたくきでしろいふくをあらいます" },
+  { de: "Ich mache Hausaufgaben", ja: "わたしはしゅくだいをします" },
+  { de: "Ich mache jeden Abend Hausaufgaben", ja: "わたしはまいばんしゅくだいをします" },
+  { de: "Ich mache jeden Abend im Zimmer Hausaufgaben", ja: "わたしはへやでまいばんしゅくだいをします" },
+  { de: "Er malt ein Bild", ja: "かれはえをかきます" },
+  { de: "Er malt ein schönes Bild", ja: "かれはきれいなえをかきます" },
+  { de: "Er malt in der Schule ein schönes Bild", ja: "かれはがっこうできれいなえをかきます" },
+  { de: "Wir fahren mit dem Zug", ja: "わたしたちはでんしゃにのります" },
+  { de: "Wir fahren mit dem Morgenzug", ja: "わたしたちはあさのでんしゃにのります" },
+  { de: "Wir fahren mit dem Morgenzug nach Tokio", ja: "わたしたちはとうきょうへあさのでんしゃにのります" },
+  { de: "Ich kaufe Blumen", ja: "わたしははなをかいます" },
+  { de: "Ich kaufe rote Blumen", ja: "わたしはあかいはなをかいます" },
+  { de: "Ich kaufe rote Blumen für meine Mutter", ja: "わたしはははのためにあかいはなをかいます" },
+  { de: "Ich setze mich an den Tisch", ja: "わたしはテーブルにすわります" },
+  { de: "Ich setze mich an den gelben Tisch", ja: "わたしはきいろいテーブルにすわります" },
+  { de: "Ich setze mich neben meinen Freund an den gelben Tisch", ja: "わたしはともだちのとなりできいろいテーブルにすわります" },
+
+];
+
+const synth = window.speechSynthesis;
+const langToBCP = { de:["de-DE","de"], ja:["ja-JP","ja"] };
+const blockSelect = document.getElementById("blockSelect");
+const scheduleModeSel = document.getElementById("scheduleMode");
+const shuffleBlockChk = document.getElementById("shuffleBlock");
+const deRepeatSel = document.getElementById("deRepeat");
+const jaRepeatSel = document.getElementById("jaRepeat");
+const thinkDelayInput = document.getElementById("thinkDelay");
+const nextDelayInput = document.getElementById("nextDelay");
+const deVoiceSel = document.getElementById("deVoice");
+const jaVoiceSel = document.getElementById("jaVoice");
+const jaSizeInput = document.getElementById("jaSize");
+const jaSizeValue = document.getElementById("jaSizeValue");
+const autoModeChk = document.getElementById("autoMode");
+const metaEl = document.getElementById("meta");
+const deTextEl = document.getElementById("deText");
+const jaTextEl = document.getElementById("jaText");
+const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const replayBtn = document.getElementById("replayBtn");
+
+let voices = [];
+let blockPhrases = [];
+let schedule = [];
+let stepIndex = 0;
+let showingJapanese = false;
+let paused = false;
+let timer = null;
+let speechToken = 0;
+
+const GENERAL_VOICE_PREFERENCE = [/google/i];
+const LANGUAGE_VOICE_PREFERENCE = {
+  de: [/microsoft\s+ingrid/i],
+  ja: [/kyoko/i, /nanami/i, /google/i]
+};
+
+function updateJapaneseSize() {
+  const size = clampNumber(jaSizeInput.value, 20, 64, 30);
+  jaSizeInput.value = String(size);
+  jaSizeValue.textContent = String(size);
+  document.documentElement.style.setProperty("--ja-size", size + "px");
+}
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function populateBlocks() {
+  blockSelect.innerHTML = "";
+  const blockCount = Math.ceil(PRELOADED_PHRASES.length / 20);
+  for (let i = 0; i < blockCount; i += 1) {
+    const start = i * 20 + 1;
+    const end = Math.min((i + 1) * 20, PRELOADED_PHRASES.length);
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = `Block ${i + 1}: ${start}-${end}`;
+    blockSelect.appendChild(opt);
+  }
+}
+
+function shufflePhrases(items) {
+  const copy = items.slice();
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function getSelectedBlock() {
+  const blockIndex = Number(blockSelect.value) || 0;
+  const start = blockIndex * 20;
+  const selected = PRELOADED_PHRASES.slice(start, start + 20).map((phrase, index) => ({
+    ...phrase,
+    globalIndex: start + index + 1,
+    originalBlockIndex: index + 1
+  }));
+  const ordered = shuffleBlockChk.checked ? shufflePhrases(selected) : selected;
+  return ordered.map((phrase, index) => ({
+    ...phrase,
+    blockIndex: index + 1
+  }));
+}
+
+function addRange(items, start, end) {
+  const from = Math.max(1, start);
+  const to = Math.min(items.length, end);
+  const result = [];
+  for (let i = from; i <= to; i += 1) result.push(i - 1);
+  return result;
+}
+
+function buildIntensiveSchedule(items) {
+  if (!items.length) return [];
+  const order = [];
+  const pushRange = (start, end) => order.push(...addRange(items, start, end));
+
+  for (let end = 5; end <= Math.min(10, items.length); end += 1) {
+    pushRange(Math.max(1, end - 5), end);
+  }
+  if (items.length >= 10) pushRange(1, 10);
+
+  for (let end = 11; end <= Math.min(15, items.length); end += 1) {
+    pushRange(Math.max(1, end - 5), end);
+  }
+  if (items.length >= 15) pushRange(6, 15);
+
+  for (let end = 16; end <= items.length; end += 1) {
+    pushRange(Math.max(1, end - 5), end);
+  }
+  if (items.length > 15) pushRange(11, items.length);
+  if (items.length > 10) pushRange(1, Math.min(10, items.length));
+  if (items.length > 10) pushRange(11, items.length);
+
+  return order.map(phraseIndex => items[phraseIndex]);
+}
+
+function buildReminderSchedule(items) {
+  if (!items.length) return [];
+  const order = [];
+  const pushRange = (start, end) => order.push(...addRange(items, start, end));
+
+  pushRange(1, 5);
+  pushRange(6, 10);
+  if (items.length > 5) pushRange(1, 10);
+
+  pushRange(11, 15);
+  pushRange(16, 20);
+  if (items.length > 10) pushRange(11, 20);
+
+  if (items.length > 10) {
+    pushRange(1, 10);
+    pushRange(11, 20);
+  } else {
+    pushRange(1, items.length);
+  }
+
+  return order.map(phraseIndex => items[phraseIndex]);
+}
+
+function buildReviewSchedule(items) {
+  return scheduleModeSel.value === "reminder"
+    ? buildReminderSchedule(items)
+    : buildIntensiveSchedule(items);
+}
+
+function populateVoices() {
+  voices = synth.getVoices().slice().sort((a, b) => (a.lang || "").localeCompare(b.lang || "") || (a.name || "").localeCompare(b.name || ""));
+  updateVoiceSelect(deVoiceSel, "de");
+  updateVoiceSelect(jaVoiceSel, "ja");
+}
+
+function updateVoiceSelect(select, langCode) {
+  const prefs = langToBCP[langCode].map(value => value.toLowerCase());
+  const list = voices.filter(voice => prefs.some(pref => (voice.lang || "").toLowerCase().startsWith(pref)));
+  select.innerHTML = "";
+  const autoOpt = document.createElement("option");
+  autoOpt.value = "auto";
+  autoOpt.textContent = list.length ? `Auto (${langCode})` : "Auto";
+  select.appendChild(autoOpt);
+  list.forEach(voice => {
+    const opt = document.createElement("option");
+    opt.value = `${voice.name}||${voice.lang}`;
+    opt.textContent = `${voice.name} - ${voice.lang}`;
+    select.appendChild(opt);
+  });
+  select.disabled = list.length === 0;
+}
+
+function findPreferredVoice(list, langCode) {
+  const patterns = [...GENERAL_VOICE_PREFERENCE, ...(LANGUAGE_VOICE_PREFERENCE[langCode] || [])];
+  for (const pattern of patterns) {
+    const match = list.find(voice => pattern.test(voice.name || ""));
+    if (match) return match;
+  }
+  return null;
+}
+
+function pickVoice(langCode) {
+  const prefs = langToBCP[langCode].map(value => value.toLowerCase());
+  const matches = voices.filter(voice => prefs.some(pref => (voice.lang || "").toLowerCase().startsWith(pref)));
+  return findPreferredVoice(matches, langCode) || matches[0] || voices[0] || null;
+}
+
+function findVoice(select, langCode) {
+  if (!select.value || select.value === "auto") return pickVoice(langCode);
+  const [name, lang] = select.value.split("||");
+  return voices.find(voice => voice.name === name && voice.lang === lang) || pickVoice(langCode);
+}
+
+function clearTimer() {
+  if (timer) clearTimeout(timer);
+  timer = null;
+}
+
+function cancelSpeech() {
+  speechToken += 1;
+  synth.cancel();
+}
+
+function speak(text, langCode, repeat, voiceSelect, rates = null) {
+  const token = ++speechToken;
+  const repeats = clampNumber(repeat, 1, 5, 1);
+  const selectedVoice = findVoice(voiceSelect, langCode);
+  return new Promise(resolve => {
+    let left = repeats;
+    const speakNext = () => {
+      if (token !== speechToken || left <= 0) { resolve(); return; }
+      const currentRepeatIndex = repeats - left;
+      left -= 1;
+      const cleanText = String(text || "").trim();
+      if (!cleanText) { resolve(); return; }
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = langToBCP[langCode][0];
+      if (Array.isArray(rates) && rates[currentRepeatIndex]) utterance.rate = rates[currentRepeatIndex];
+      if (selectedVoice) utterance.voice = selectedVoice;
+      utterance.onend = () => left > 0 ? setTimeout(speakNext, 1000) : resolve();
+      utterance.onerror = resolve;
+      synth.speak(utterance);
+    };
+    speakNext();
+  });
+}
+
+function currentPhrase() {
+  return schedule[stepIndex] || null;
+}
+
+function render() {
+  const phrase = currentPhrase();
+  if (!phrase) {
+    deTextEl.textContent = "No phrases loaded";
+    jaTextEl.textContent = "";
+    jaTextEl.classList.add("hidden");
+    metaEl.textContent = "";
+    return;
+  }
+
+  deTextEl.textContent = phrase.de;
+  jaTextEl.textContent = phrase.ja;
+  jaTextEl.classList.toggle("hidden", !showingJapanese);
+  const blockNumber = (Number(blockSelect.value) || 0) + 1;
+  metaEl.textContent = `Block ${blockNumber} phrase ${phrase.blockIndex}/${blockPhrases.length} - Global phrase ${phrase.globalIndex}/${PRELOADED_PHRASES.length} - Step ${stepIndex + 1}/${schedule.length}`;
+}
+
+function setControlsEnabled(enabled) {
+  pauseBtn.disabled = !enabled;
+  prevBtn.disabled = !enabled;
+  nextBtn.disabled = !enabled;
+  replayBtn.disabled = !enabled;
+}
+
+function scheduleAfter(seconds, callback) {
+  clearTimer();
+  timer = setTimeout(callback, seconds * 1000);
+}
+
+function playCurrentFromGerman() {
+  const phrase = currentPhrase();
+  if (!phrase) return;
+  paused = false;
+  showingJapanese = false;
+  render();
+  cancelSpeech();
+  speak(phrase.de, "de", Number(deRepeatSel.value), deVoiceSel).then(() => {
+    if (paused || !autoModeChk.checked) return;
+    scheduleAfter(clampNumber(thinkDelayInput.value, 1, 30, 6), playJapanese);
+  });
+}
+
+function playJapanese() {
+  const phrase = currentPhrase();
+  if (!phrase) return;
+  showingJapanese = true;
+  render();
+  cancelSpeech();
+  speak(phrase.ja, "ja", Number(jaRepeatSel.value), jaVoiceSel, [0.75, 0.85, 1]).then(() => {
+    if (paused || !autoModeChk.checked) return;
+    scheduleAfter(clampNumber(nextDelayInput.value, 1, 30, 3), nextStep);
+  });
+}
+
+function nextStep() {
+  if (!schedule.length) return;
+  if (stepIndex >= schedule.length - 1) {
+    const nextBlockIndex = (Number(blockSelect.value) || 0) + 1;
+    if (nextBlockIndex < blockSelect.options.length) {
+      blockSelect.value = String(nextBlockIndex);
+      blockPhrases = getSelectedBlock();
+      schedule = buildReviewSchedule(blockPhrases);
+      stepIndex = 0;
+      showingJapanese = false;
+      paused = false;
+      setControlsEnabled(schedule.length > 0);
+      playCurrentFromGerman();
+      return;
+    }
+    paused = true;
+    clearTimer();
+    autoModeChk.checked = false;
+    showingJapanese = true;
+    render();
+    return;
+  }
+  stepIndex += 1;
+  playCurrentFromGerman();
+}
+
+function previousStep() {
+  if (!schedule.length) return;
+  stepIndex = Math.max(0, stepIndex - 1);
+  playCurrentFromGerman();
+}
+
+function startSession() {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingJapanese = false;
+  paused = false;
+  setControlsEnabled(schedule.length > 0);
+  if (autoModeChk.checked) playCurrentFromGerman();
+  else render();
+}
+
+startBtn.addEventListener("click", startSession);
+pauseBtn.addEventListener("click", () => {
+  paused = true;
+  clearTimer();
+  cancelSpeech();
+});
+prevBtn.addEventListener("click", previousStep);
+nextBtn.addEventListener("click", nextStep);
+replayBtn.addEventListener("click", playCurrentFromGerman);
+blockSelect.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingJapanese = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+scheduleModeSel.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingJapanese = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+shuffleBlockChk.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingJapanese = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+autoModeChk.addEventListener("change", () => {
+  clearTimer();
+  if (autoModeChk.checked && schedule.length) playCurrentFromGerman();
+});
+jaSizeInput.addEventListener("input", updateJapaneseSize);
+
+if (typeof synth.onvoiceschanged !== "undefined") synth.onvoiceschanged = populateVoices;
+populateBlocks();
+populateVoices();
+updateJapaneseSize();
+blockPhrases = getSelectedBlock();
+schedule = buildReviewSchedule(blockPhrases);
+render();
+</script>
+</body>
+</html>
