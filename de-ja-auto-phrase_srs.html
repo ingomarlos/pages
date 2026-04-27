@@ -51,6 +51,15 @@
         <select id="blockSelect"></select>
       </div>
       <div>
+        <label>Block size</label>
+        <select id="blockSize">
+          <option value="20" selected>20 cards</option>
+          <option value="40">40 cards</option>
+          <option value="80">80 cards</option>
+          <option value="100">100 cards</option>
+        </select>
+      </div>
+      <div>
         <label>Repetition mode</label>
         <select id="scheduleMode">
           <option value="intensive" selected>Intensive - new stuff</option>
@@ -78,11 +87,11 @@
       </div>
       <div>
         <label>Think time (sec)</label>
-        <input id="thinkDelay" type="number" min="1" max="30" value="8"/>
+        <input id="thinkDelay" type="number" min="1" max="30" value="6"/>
       </div>
       <div>
         <label>Next phrase after (sec)</label>
-        <input id="nextDelay" type="number" min="1" max="30" value="5"/>
+        <input id="nextDelay" type="number" min="1" max="30" value="4"/>
       </div>
       <div>
         <label>Voice (German)</label>
@@ -98,7 +107,7 @@
       </div>
     </div>
     <label><input type="checkbox" id="autoMode" checked/> Auto mode</label>
-    <p style="font-size:0.9rem;color:var(--muted);margin:0;">Pick a 20-phrase block and a repetition mode. Intensive is for new material; Reminder is a lighter review. Nothing is saved.</p>
+    <p style="font-size:0.9rem;color:var(--muted);margin:0;">Pick a block size and repetition mode. Intensive is for new material; Reminder is a lighter review. Nothing is saved.</p>
   </section>
 
   <section>
@@ -121,7 +130,7 @@
 </div>
 
 <script>
-// Add as many phrases as you want. Blocks are generated automatically in groups of 20.
+// Add as many phrases as you want. Choose a block size to generate groups of 20, 40, 80, or 100.
 const PRELOADED_PHRASES = [
 { de: "Ich gehe", ja: "行(い)きます" },
 { de: "Ich komme", ja: "来(き)ます" },
@@ -440,6 +449,58 @@ const PRELOADED_PHRASES = [
 { de: "Ich brauche", ja: "私(わたし)は要(い)ります" },
 { de: "Ich brauche Geld", ja: "私(わたし)はお金(かね)が要(い)ります" },
 { de: "Ich brauche viel Geld", ja: "私(わたし)はたくさんのお金(かね)が要(い)ります" },
+{ de: "Ich öffne", ja: "私(わたし)は開(あ)けます" },
+{ de: "Ich öffne die Flasche", ja: "私(わたし)はボトルを開(あ)けます" },
+{ de: "Ich öffne die kalte Flasche", ja: "私(わたし)は冷(つめ)たいボトルを開(あ)けます" },
+{ de: "Ich schließe", ja: "私(わたし)は閉(し)めます" },
+{ de: "Ich schließe die Tasche", ja: "私(わたし)はかばんを閉(し)めます" },
+{ de: "Ich schließe die kleine Tasche", ja: "私(わたし)は小(ちい)さいかばんを閉(し)めます" },
+{ de: "Ich trage", ja: "私(わたし)は持(も)ちます" },
+{ de: "Ich trage eine Tasche", ja: "私(わたし)はかばんを持(も)ちます" },
+{ de: "Ich trage eine schwere Tasche", ja: "私(わたし)は重(おも)いかばんを持(も)ちます" },
+{ de: "Ich nehme", ja: "私(わたし)は取(と)ります" },
+{ de: "Ich nehme ein Glas", ja: "私(わたし)はコップを取(と)ります" },
+{ de: "Ich nehme ein sauberes Glas", ja: "私(わたし)はきれいなコップを取(と)ります" },
+{ de: "Ich suche", ja: "私(わたし)は探(さが)します" },
+{ de: "Ich suche mein Buch", ja: "私(わたし)は本(ほん)を探(さが)します" },
+{ de: "Ich suche mein neues Buch", ja: "私(わたし)は新(あたら)しい本(ほん)を探(さが)します" },
+{ de: "Ich finde", ja: "私(わたし)は見(み)つけます" },
+{ de: "Ich finde mein Buch", ja: "私(わたし)は本(ほん)を見(み)つけます" },
+{ de: "Ich finde mein kleines Buch", ja: "私(わたし)は小(ちい)さい本(ほん)を見(み)つけます" },
+{ de: "Ich wasche", ja: "私(わたし)は洗(あら)います" },
+{ de: "Ich wasche das Glas", ja: "私(わたし)はコップを洗(あら)います" },
+{ de: "Ich wasche das schmutzige Glas", ja: "私(わたし)は汚(よご)いコップを洗(あら)います" },
+{ de: "Ich putze", ja: "私(わたし)は磨(みが)きます" },
+{ de: "Ich putze meine Schuhe", ja: "私(わたし)は靴(くつ)を磨(みが)きます" },
+{ de: "Ich putze meine schwarzen Schuhe", ja: "私(わたし)は黒(くろ)い靴(くつ)を磨(みが)きます" },
+{ de: "Ich male", ja: "私(わたし)は塗(ぬ)ります" },
+{ de: "Ich male die Wand", ja: "私(わたし)は壁(かべ)を塗(ぬ)ります" },
+{ de: "Ich male die weiße Wand", ja: "私(わたし)は白(しろ)い壁(かべ)を塗(ぬ)ります" },
+{ de: "Ich koche", ja: "私(わたし)は料理(りょうり)します" },
+{ de: "Ich koche Eier", ja: "私(わたし)は卵(たまご)を料理(りょうり)します" },
+{ de: "Ich koche warme Eier", ja: "私(わたし)は温(あたた)かい卵(たまご)を料理(りょうり)します" },
+{ de: "Ich schäle", ja: "私(わたし)はむきます" },
+{ de: "Ich schäle eine Orange", ja: "私(わたし)はオレンジをむきます" },
+{ de: "Ich schäle eine süße Orange", ja: "私(わたし)は甘(あま)いオレンジをむきます" },
+{ de: "Ich stelle", ja: "私(わたし)は置(お)きます" },
+{ de: "Ich stelle den Teller hin", ja: "私(わたし)は皿(さら)を置(お)きます" },
+{ de: "Ich stelle den großen Teller hin", ja: "私(わたし)は大(おお)きい皿(さら)を置(お)きます" },
+{ de: "Ich zeige", ja: "私(わたし)は見(み)せます" },
+{ de: "Ich zeige das Bild", ja: "私(わたし)は写真(しゃしん)を見(み)せます" },
+{ de: "Ich zeige das schöne Bild", ja: "私(わたし)はきれいな写真(しゃしん)を見(み)せます" },
+{ de: "Ich lerne", ja: "私(わたし)は覚(おぼ)えます" },
+{ de: "Ich lerne ein Wort", ja: "私(わたし)は言葉(ことば)を覚(おぼ)えます" },
+{ de: "Ich lerne ein schweres Wort", ja: "私(わたし)は難(むずか)しい言葉(ことば)を覚(おぼ)えます" },
+{ de: "Ich vergesse", ja: "私(わたし)は忘(わす)れます" },
+{ de: "Ich vergesse den Namen", ja: "私(わたし)は名前(なまえ)を忘(わす)れます" },
+{ de: "Ich vergesse den langen Namen", ja: "私(わたし)は長(なが)い名前(なまえ)を忘(わす)れます" },
+{ de: "Ich benutze", ja: "私(わたし)は使(つか)います" },
+{ de: "Ich benutze Seife", ja: "私(わたし)はせっけんを使(つか)います" },
+{ de: "Ich benutze gute Seife", ja: "私(わたし)はいいせっけんを使(つか)います" },
+{ de: "Ich brauche", ja: "私(わたし)は要(い)ります" },
+{ de: "Ich brauche Zeit", ja: "私(わたし)は時間(じかん)が要(い)ります" },
+{ de: "Ich brauche viel Zeit", ja: "私(わたし)はたくさん時間(じかん)が要(い)ります" },
+
 { de: "Er kauft Kaffee", ja: "彼(かれ)はコーヒーを買(か)います" },
 { de: "Er kauft heißen Kaffee", ja: "彼(かれ)は熱(あつ)いコーヒーを買(か)います" },
 { de: "Er kauft morgens heißen Kaffee", ja: "彼(かれ)は朝(あさ)に熱(あつ)いコーヒーを買(か)います" },
@@ -549,6 +610,7 @@ const PRELOADED_PHRASES = [
 const synth = window.speechSynthesis;
 const langToBCP = { de:["de-DE","de"], ja:["ja-JP","ja"] };
 const blockSelect = document.getElementById("blockSelect");
+const blockSizeSel = document.getElementById("blockSize");
 const scheduleModeSel = document.getElementById("scheduleMode");
 const shuffleBlockChk = document.getElementById("shuffleBlock");
 const deRepeatSel = document.getElementById("deRepeat");
@@ -597,16 +659,25 @@ function clampNumber(value, min, max, fallback) {
   return Math.min(max, Math.max(min, parsed));
 }
 
+function getBlockSize() {
+  return clampNumber(blockSizeSel.value, 20, 100, 20);
+}
+
 function populateBlocks() {
+  const previousValue = blockSelect.value;
+  const blockSize = getBlockSize();
   blockSelect.innerHTML = "";
-  const blockCount = Math.ceil(PRELOADED_PHRASES.length / 20);
+  const blockCount = Math.ceil(PRELOADED_PHRASES.length / blockSize);
   for (let i = 0; i < blockCount; i += 1) {
-    const start = i * 20 + 1;
-    const end = Math.min((i + 1) * 20, PRELOADED_PHRASES.length);
+    const start = i * blockSize + 1;
+    const end = Math.min((i + 1) * blockSize, PRELOADED_PHRASES.length);
     const opt = document.createElement("option");
     opt.value = String(i);
     opt.textContent = `Block ${i + 1}: ${start}-${end}`;
     blockSelect.appendChild(opt);
+  }
+  if ([...blockSelect.options].some(option => option.value === previousValue)) {
+    blockSelect.value = previousValue;
   }
 }
 
@@ -620,9 +691,10 @@ function shufflePhrases(items) {
 }
 
 function getSelectedBlock() {
+  const blockSize = getBlockSize();
   const blockIndex = Number(blockSelect.value) || 0;
-  const start = blockIndex * 20;
-  const selected = PRELOADED_PHRASES.slice(start, start + 20).map((phrase, index) => ({
+  const start = blockIndex * blockSize;
+  const selected = PRELOADED_PHRASES.slice(start, start + blockSize).map((phrase, index) => ({
     ...phrase,
     globalIndex: start + index + 1,
     originalBlockIndex: index + 1
@@ -672,19 +744,19 @@ function buildReminderSchedule(items) {
   const order = [];
   const pushRange = (start, end) => order.push(...addRange(items, start, end));
 
-  pushRange(1, 5);
-  pushRange(6, 10);
-  if (items.length > 5) pushRange(1, 10);
+  for (let start = 1; start <= items.length; start += 20) {
+    const end = Math.min(start + 19, items.length);
+    const firstMid = Math.min(start + 4, end);
+    const firstEnd = Math.min(start + 9, end);
+    const secondMid = Math.min(start + 14, end);
 
-  pushRange(11, 15);
-  pushRange(16, 20);
-  if (items.length > 10) pushRange(11, 20);
-
-  if (items.length > 10) {
-    pushRange(1, 10);
-    pushRange(11, 20);
-  } else {
-    pushRange(1, items.length);
+    pushRange(start, firstMid);
+    if (firstMid < end) pushRange(firstMid + 1, firstEnd);
+    if (firstEnd > start) pushRange(start, firstEnd);
+    if (firstEnd < end) pushRange(firstEnd + 1, secondMid);
+    if (secondMid < end) pushRange(secondMid + 1, end);
+    if (firstEnd < end) pushRange(firstEnd + 1, end);
+    pushRange(start, end);
   }
 
   return order.map(phraseIndex => items[phraseIndex]);
@@ -854,7 +926,7 @@ function playJapanese() {
   cancelSpeech();
   speak(stripJapaneseReadings(phrase.ja), "ja", Number(jaRepeatSel.value), jaVoiceSel, [0.75, 0.85, 1]).then(() => {
     if (paused || !autoModeChk.checked) return;
-    scheduleAfter(clampNumber(nextDelayInput.value, 1, 30, 3), nextStep);
+    scheduleAfter(clampNumber(nextDelayInput.value, 1, 30, 4), nextStep);
   });
 }
 
@@ -915,6 +987,18 @@ replayBtn.addEventListener("click", playCurrentFromGerman);
 blockSelect.addEventListener("change", () => {
   clearTimer();
   cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingJapanese = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+blockSizeSel.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  populateBlocks();
   blockPhrases = getSelectedBlock();
   schedule = buildReviewSchedule(blockPhrases);
   stepIndex = 0;

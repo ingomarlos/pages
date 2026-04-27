@@ -47,6 +47,15 @@
         <select id="blockSelect"></select>
       </div>
       <div>
+        <label>Block size</label>
+        <select id="blockSize">
+          <option value="20" selected>20 cards</option>
+          <option value="40">40 cards</option>
+          <option value="80">80 cards</option>
+          <option value="100">100 cards</option>
+        </select>
+      </div>
+      <div>
         <label>Repetition mode</label>
         <select id="scheduleMode">
           <option value="intensive" selected>Intensive - new stuff</option>
@@ -94,7 +103,7 @@
       </div>
     </div>
     <label><input type="checkbox" id="autoMode" checked/> Auto mode</label>
-    <p style="font-size:0.9rem;color:var(--muted);margin:0;">Replace the sample phrases in <code>PRELOADED_PHRASES</code>. Blocks are generated automatically in groups of 20.</p>
+    <p style="font-size:0.9rem;color:var(--muted);margin:0;">Replace the sample phrases in <code>PRELOADED_PHRASES</code>. Choose a block size to generate groups of 20, 40, 80, or 100.</p>
   </section>
 
   <section>
@@ -981,6 +990,7 @@ const REPEAT_GAP_MS = 1000;
 const synth = window.speechSynthesis;
 const langToBCP = { en:["en-US","en-GB","en"], de:["de-DE","de"] };
 const blockSelect = document.getElementById("blockSelect");
+const blockSizeSel = document.getElementById("blockSize");
 const scheduleModeSel = document.getElementById("scheduleMode");
 const shuffleBlockChk = document.getElementById("shuffleBlock");
 const sourceRepeatSel = document.getElementById("sourceRepeat");
@@ -1029,16 +1039,25 @@ function updateTargetSize() {
   document.documentElement.style.setProperty("--target-size", size + "px");
 }
 
+function getBlockSize() {
+  return clampNumber(blockSizeSel.value, 20, 100, 20);
+}
+
 function populateBlocks() {
+  const previousValue = blockSelect.value;
+  const blockSize = getBlockSize();
   blockSelect.innerHTML = "";
-  const blockCount = Math.ceil(PRELOADED_PHRASES.length / 20);
+  const blockCount = Math.ceil(PRELOADED_PHRASES.length / blockSize);
   for (let i = 0; i < blockCount; i += 1) {
-    const start = i * 20 + 1;
-    const end = Math.min((i + 1) * 20, PRELOADED_PHRASES.length);
+    const start = i * blockSize + 1;
+    const end = Math.min((i + 1) * blockSize, PRELOADED_PHRASES.length);
     const opt = document.createElement("option");
     opt.value = String(i);
     opt.textContent = `Block ${i + 1}: ${start}-${end}`;
     blockSelect.appendChild(opt);
+  }
+  if ([...blockSelect.options].some(option => option.value === previousValue)) {
+    blockSelect.value = previousValue;
   }
 }
 
@@ -1052,9 +1071,10 @@ function shufflePhrases(items) {
 }
 
 function getSelectedBlock() {
+  const blockSize = getBlockSize();
   const blockIndex = Number(blockSelect.value) || 0;
-  const start = blockIndex * 20;
-  const selected = PRELOADED_PHRASES.slice(start, start + 20).map((phrase, index) => ({
+  const start = blockIndex * blockSize;
+  const selected = PRELOADED_PHRASES.slice(start, start + blockSize).map((phrase, index) => ({
     ...phrase,
     globalIndex: start + index + 1,
     originalBlockIndex: index + 1
@@ -1104,19 +1124,19 @@ function buildReminderSchedule(items) {
   const order = [];
   const pushRange = (start, end) => order.push(...addRange(items, start, end));
 
-  pushRange(1, 5);
-  pushRange(6, 10);
-  if (items.length > 5) pushRange(1, 10);
+  for (let start = 1; start <= items.length; start += 20) {
+    const end = Math.min(start + 19, items.length);
+    const firstMid = Math.min(start + 4, end);
+    const firstEnd = Math.min(start + 9, end);
+    const secondMid = Math.min(start + 14, end);
 
-  pushRange(11, 15);
-  pushRange(16, 20);
-  if (items.length > 10) pushRange(11, 20);
-
-  if (items.length > 10) {
-    pushRange(1, 10);
-    pushRange(11, 20);
-  } else {
-    pushRange(1, items.length);
+    pushRange(start, firstMid);
+    if (firstMid < end) pushRange(firstMid + 1, firstEnd);
+    if (firstEnd > start) pushRange(start, firstEnd);
+    if (firstEnd < end) pushRange(firstEnd + 1, secondMid);
+    if (secondMid < end) pushRange(secondMid + 1, end);
+    if (firstEnd < end) pushRange(firstEnd + 1, end);
+    pushRange(start, end);
   }
 
   return order.map(phraseIndex => items[phraseIndex]);
@@ -1321,6 +1341,18 @@ replayBtn.addEventListener("click", playCurrentFromSource);
 blockSelect.addEventListener("change", () => {
   clearTimer();
   cancelSpeech();
+  blockPhrases = getSelectedBlock();
+  schedule = buildReviewSchedule(blockPhrases);
+  stepIndex = 0;
+  showingTarget = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+});
+blockSizeSel.addEventListener("change", () => {
+  clearTimer();
+  cancelSpeech();
+  populateBlocks();
   blockPhrases = getSelectedBlock();
   schedule = buildReviewSchedule(blockPhrases);
   stepIndex = 0;
