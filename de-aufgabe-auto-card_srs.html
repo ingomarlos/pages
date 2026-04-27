@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Aufgabe SRS</title>
+<style>
+  :root { --bg:#0b0b0c; --fg:#f7f7fa; --muted:#9aa0a6; --surface:#151821; --surface-hi:#1f2330; --answer-size:24px; }
+  * { box-sizing:border-box; }
+  body { font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+         background:var(--bg); color:var(--fg); margin:0; min-height:100vh;
+         display:flex; justify-content:center; }
+  .app { width:min(860px,100%); padding:clamp(18px,4vw,32px); display:flex; flex-direction:column; gap:20px; }
+  h1 { margin:0; text-align:center; font-size:2rem; }
+  .panel { background:var(--surface); border:1px solid rgba(255,255,255,0.08); border-radius:8px;
+           padding:clamp(16px,4vw,26px); box-shadow:0 18px 40px rgba(0,0,0,0.45); display:flex; flex-direction:column; gap:14px; }
+  label { font-weight:600; font-size:0.95rem; }
+  select, input, button { width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.08);
+                          padding:10px 14px; font-size:1rem; background:var(--surface-hi); color:var(--fg); }
+  input[type="range"] { appearance:none; -webkit-appearance:none; height:38px; padding:0 4px; background:transparent; border:none; cursor:pointer; }
+  input[type="range"]::-webkit-slider-runnable-track { height:8px; border-radius:8px; background:linear-gradient(90deg,#4c8bf5,#6cc4ff); }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; margin-top:-7px; border-radius:50%; border:2px solid #ffffff; background:#f7f7fa; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
+  input[type="range"]::-moz-range-track { height:8px; border-radius:8px; background:linear-gradient(90deg,#4c8bf5,#6cc4ff); }
+  input[type="range"]::-moz-range-thumb { width:22px; height:22px; border-radius:50%; border:2px solid #ffffff; background:#f7f7fa; box-shadow:0 2px 8px rgba(0,0,0,0.45); }
+  button.primary { background:linear-gradient(135deg,rgba(76,139,245,0.93),rgba(90,160,255,0.88)); border:none;
+                   box-shadow:0 12px 28px rgba(76,139,245,0.35); font-weight:600; cursor:pointer; }
+  button.secondary { background:rgba(24,28,40,0.9); font-weight:600; cursor:pointer; }
+  button:disabled { opacity:0.5; cursor:not-allowed; }
+  .card { min-height:320px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+          text-align:left; gap:18px; padding:30px; border-radius:8px; background:linear-gradient(160deg,#191d29,#10121a);
+          box-shadow:0 20px 45px rgba(0,0,0,0.5); }
+  .front { width:100%; font-size:1.65rem; font-weight:700; line-height:1.35; text-align:center; }
+  .back { width:100%; font-size:var(--answer-size); font-weight:650; line-height:1.45; color:#d8e6ff; }
+  .answer-marker { color:#b9cdb8; }
+  .meta { font-size:0.95rem; color:var(--muted); text-align:center; line-height:1.45; }
+  .controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Aufgabe SRS</h1>
+
+  <section class="panel">
+    <div class="controls">
+      <div>
+        <label>Block</label>
+        <select id="blockSelect"></select>
+      </div>
+      <div>
+        <label>Block size</label>
+        <select id="blockSize">
+          <option value="20" selected>20 cards</option>
+          <option value="40">40 cards</option>
+          <option value="80">80 cards</option>
+          <option value="100">100 cards</option>
+        </select>
+      </div>
+      <div>
+        <label>Repetition mode</label>
+        <select id="scheduleMode">
+          <option value="intensive" selected>Intensive - new stuff</option>
+          <option value="reminder">Reminder - lighter review</option>
+        </select>
+      </div>
+      <div>
+        <label><input type="checkbox" id="shuffleBlock"/> Shuffle group before playing</label>
+      </div>
+      <div>
+        <label>Question repeats</label>
+        <select id="frontRepeat">
+          <option value="1" selected>1x</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+        </select>
+      </div>
+      <div>
+        <label>Answer repeats</label>
+        <select id="backRepeat">
+          <option value="1">1x</option>
+          <option value="2" selected>2x</option>
+          <option value="3">3x</option>
+        </select>
+      </div>
+      <div>
+        <label>Think time (sec)</label>
+        <input id="thinkDelay" type="number" min="1" max="30" value="8"/>
+      </div>
+      <div>
+        <label>Next card after (sec)</label>
+        <input id="nextDelay" type="number" min="1" max="30" value="5"/>
+      </div>
+      <div>
+        <label>Voice (German)</label>
+        <select id="voiceSelect" disabled></select>
+      </div>
+      <div>
+        <label for="answerSize">Answer size: <span id="answerSizeValue">24</span>px</label>
+        <input id="answerSize" type="range" min="18" max="48" value="24"/>
+      </div>
+    </div>
+    <label><input type="checkbox" id="autoMode" checked/> Auto mode</label>
+  </section>
+
+  <section>
+    <div class="meta" id="meta">Press Start.</div>
+    <div class="card">
+      <div class="front" id="frontText">Waiting...</div>
+      <div class="back hidden" id="backText"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="controls">
+      <button id="startBtn" class="primary">Start</button>
+      <button id="pauseBtn" class="secondary" disabled>Pause</button>
+      <button id="prevBtn" class="secondary" disabled>Previous step</button>
+      <button id="nextBtn" class="secondary" disabled>Next step</button>
+      <button id="replayBtn" class="secondary" disabled>Replay current</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// Keep each card as one line. The app splits it at "Antwort:".
+const PRELOADED_CARDS = [
+  "Aufgabe 1: „In Deutschland dürfen Menschen offen etwas gegen die Regierung sagen, weil ...“ Antwort: hier Meinungsfreiheit gilt. Das bedeutet, dass man in Deutschland seine Meinung frei sagen darf. Man darf auch die Regierung kritisieren. Das ist erlaubt, solange man dabei nicht gegen Gesetze verstößt. Meinungsfreiheit heißt also: Ich darf offen sagen, was ich denke.",
+  "Aufgabe 2: „In Deutschland können Eltern bis zum 14. Lebensjahr ihres Kindes entscheiden, ob es in der Schule am ...“ Antwort: Religionsunterricht teilnimmt. Das bedeutet, dass Eltern in Deutschland bis zu diesem Alter mitentscheiden dürfen, ob ihr Kind am Religionsunterricht teilnimmt. Später kann das Kind in dieser Frage mehr selbst entscheiden. Es geht hier also um den Religionsunterricht und nicht um andere Fächer.",
+  "Aufgabe 3: „Deutschland ist ein Rechtsstaat. Was ist damit gemeint?“ Antwort: Alle Einwohnerinnen und Einwohner und der Staat müssen sich an die Gesetze halten. Das bedeutet, dass die Gesetze in Deutschland für alle gelten. Nicht nur die Menschen müssen die Regeln beachten, sondern auch der Staat und seine Behörden. Niemand darf einfach machen, was er will. Genau das meint man mit Rechtsstaat.",
+  "Aufgabe 4: „Welches Recht gehört zu den Grundrechten in Deutschland?“ Antwort: Meinungsfreiheit. Das bedeutet, dass jeder Mensch in Deutschland seine Meinung frei sagen darf. Grundrechte sind besonders wichtige Rechte, die den Menschen schützen. Die Meinungsfreiheit gehört dazu und ist deshalb ein Grundrecht.",
+  "Aufgabe 5: „Wahlen in Deutschland sind frei. Was bedeutet das?“ Antwort: Die Wählerin oder der Wähler darf bei der Wahl weder beeinflusst noch zu einer bestimmten Stimmabgabe gezwungen werden und keine Nachteile durch die Wahl haben. Das bedeutet, dass jeder bei einer Wahl selbst entscheiden darf. Niemand darf Druck machen, niemand darf jemanden zwingen, und niemand darf Nachteile bekommen, weil er eine bestimmte Partei wählt. Frei wählen heißt also: Jeder entscheidet selbst und ohne Angst."
+];
+
+const synth = window.speechSynthesis;
+const langToBCP = { de:["de-DE","de"] };
+const blockSelect = document.getElementById("blockSelect");
+const blockSizeSel = document.getElementById("blockSize");
+const scheduleModeSel = document.getElementById("scheduleMode");
+const shuffleBlockChk = document.getElementById("shuffleBlock");
+const frontRepeatSel = document.getElementById("frontRepeat");
+const backRepeatSel = document.getElementById("backRepeat");
+const thinkDelayInput = document.getElementById("thinkDelay");
+const nextDelayInput = document.getElementById("nextDelay");
+const voiceSelect = document.getElementById("voiceSelect");
+const answerSizeInput = document.getElementById("answerSize");
+const answerSizeValue = document.getElementById("answerSizeValue");
+const autoModeChk = document.getElementById("autoMode");
+const metaEl = document.getElementById("meta");
+const frontTextEl = document.getElementById("frontText");
+const backTextEl = document.getElementById("backText");
+const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const replayBtn = document.getElementById("replayBtn");
+
+let voices = [];
+let blockCards = [];
+let schedule = [];
+let stepIndex = 0;
+let showingBack = false;
+let paused = false;
+let timer = null;
+let speechToken = 0;
+
+const VOICE_PREFERENCE = [/google/i, /microsoft\s+ingrid/i];
+const REPEAT_GAP_MS = 1000;
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/\x27/g, "&#39;");
+}
+
+function splitCardText(text) {
+  const marker = "Antwort:";
+  const index = String(text || "").indexOf(marker);
+  if (index === -1) return { front: String(text || "").trim(), back: "" };
+  return {
+    front: text.slice(0, index).trim(),
+    back: text.slice(index).trim()
+  };
+}
+
+function formatBack(text) {
+  return escapeHtml(text).replace(/^Antwort:/, '<span class="answer-marker">Antwort:</span>');
+}
+
+function updateAnswerSize() {
+  const size = clampNumber(answerSizeInput.value, 18, 48, 24);
+  answerSizeInput.value = String(size);
+  answerSizeValue.textContent = String(size);
+  document.documentElement.style.setProperty("--answer-size", size + "px");
+}
+
+function getBlockSize() {
+  return clampNumber(blockSizeSel.value, 20, 100, 20);
+}
+
+function populateBlocks() {
+  const previousValue = blockSelect.value;
+  const blockSize = getBlockSize();
+  blockSelect.innerHTML = "";
+  const blockCount = Math.ceil(PRELOADED_CARDS.length / blockSize);
+  for (let i = 0; i < blockCount; i += 1) {
+    const start = i * blockSize + 1;
+    const end = Math.min((i + 1) * blockSize, PRELOADED_CARDS.length);
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = `Block ${i + 1}: ${start}-${end}`;
+    blockSelect.appendChild(opt);
+  }
+  if ([...blockSelect.options].some(option => option.value === previousValue)) {
+    blockSelect.value = previousValue;
+  }
+}
+
+function shuffleCards(items) {
+  const copy = items.slice();
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function getSelectedBlock() {
+  const blockSize = getBlockSize();
+  const blockIndex = Number(blockSelect.value) || 0;
+  const start = blockIndex * blockSize;
+  const selected = PRELOADED_CARDS.slice(start, start + blockSize).map((text, index) => ({
+    ...splitCardText(text),
+    fullText: text,
+    globalIndex: start + index + 1,
+    originalBlockIndex: index + 1
+  }));
+  const ordered = shuffleBlockChk.checked ? shuffleCards(selected) : selected;
+  return ordered.map((card, index) => ({ ...card, blockIndex: index + 1 }));
+}
+
+function addRange(items, start, end) {
+  const from = Math.max(1, start);
+  const to = Math.min(items.length, end);
+  const result = [];
+  for (let i = from; i <= to; i += 1) result.push(i - 1);
+  return result;
+}
+
+function buildIntensiveSchedule(items) {
+  if (!items.length) return [];
+  const order = [];
+  const pushRange = (start, end) => order.push(...addRange(items, start, end));
+
+  for (let end = 5; end <= Math.min(10, items.length); end += 1) pushRange(Math.max(1, end - 5), end);
+  if (items.length >= 10) pushRange(1, 10);
+  for (let end = 11; end <= Math.min(15, items.length); end += 1) pushRange(Math.max(1, end - 5), end);
+  if (items.length >= 15) pushRange(6, 15);
+  for (let end = 16; end <= items.length; end += 1) pushRange(Math.max(1, end - 5), end);
+  if (items.length > 15) pushRange(11, items.length);
+  if (items.length > 10) pushRange(1, Math.min(10, items.length));
+  if (items.length > 10) pushRange(11, items.length);
+
+  return order.map(cardIndex => items[cardIndex]);
+}
+
+function buildReminderSchedule(items) {
+  if (!items.length) return [];
+  const order = [];
+  const pushRange = (start, end) => order.push(...addRange(items, start, end));
+
+  for (let start = 1; start <= items.length; start += 20) {
+    const end = Math.min(start + 19, items.length);
+    const firstMid = Math.min(start + 4, end);
+    const firstEnd = Math.min(start + 9, end);
+    const secondMid = Math.min(start + 14, end);
+    pushRange(start, firstMid);
+    if (firstMid < end) pushRange(firstMid + 1, firstEnd);
+    if (firstEnd > start) pushRange(start, firstEnd);
+    if (firstEnd < end) pushRange(firstEnd + 1, secondMid);
+    if (secondMid < end) pushRange(secondMid + 1, end);
+    if (firstEnd < end) pushRange(firstEnd + 1, end);
+    pushRange(start, end);
+  }
+
+  return order.map(cardIndex => items[cardIndex]);
+}
+
+function buildReviewSchedule(items) {
+  return scheduleModeSel.value === "reminder"
+    ? buildReminderSchedule(items)
+    : buildIntensiveSchedule(items);
+}
+
+function populateVoices() {
+  voices = synth.getVoices().slice().sort((a, b) => (a.lang || "").localeCompare(b.lang || "") || (a.name || "").localeCompare(b.name || ""));
+  updateVoiceSelect();
+}
+
+function updateVoiceSelect() {
+  const list = voices.filter(voice => (voice.lang || "").toLowerCase().startsWith("de"));
+  voiceSelect.innerHTML = "";
+  const autoOpt = document.createElement("option");
+  autoOpt.value = "auto";
+  autoOpt.textContent = list.length ? "Auto (de)" : "Auto";
+  voiceSelect.appendChild(autoOpt);
+  list.forEach(voice => {
+    const opt = document.createElement("option");
+    opt.value = `${voice.name}||${voice.lang}`;
+    opt.textContent = `${voice.name} - ${voice.lang}`;
+    voiceSelect.appendChild(opt);
+  });
+  voiceSelect.disabled = list.length === 0;
+}
+
+function pickVoice() {
+  const matches = voices.filter(voice => (voice.lang || "").toLowerCase().startsWith("de"));
+  for (const pattern of VOICE_PREFERENCE) {
+    const match = matches.find(voice => pattern.test(voice.name || ""));
+    if (match) return match;
+  }
+  return matches[0] || voices[0] || null;
+}
+
+function findVoice() {
+  if (!voiceSelect.value || voiceSelect.value === "auto") return pickVoice();
+  const [name, lang] = voiceSelect.value.split("||");
+  return voices.find(voice => voice.name === name && voice.lang === lang) || pickVoice();
+}
+
+function clearTimer() {
+  if (timer) clearTimeout(timer);
+  timer = null;
+}
+
+function cancelSpeech() {
+  speechToken += 1;
+  synth.cancel();
+}
+
+function speak(text, repeat) {
+  const token = ++speechToken;
+  const repeats = clampNumber(repeat, 1, 5, 1);
+  const selectedVoice = findVoice();
+  return new Promise(resolve => {
+    let left = repeats;
+    const speakNext = () => {
+      if (token !== speechToken || left <= 0) { resolve(); return; }
+      left -= 1;
+      const cleanText = String(text || "").trim();
+      if (!cleanText) { resolve(); return; }
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = langToBCP.de[0];
+      if (selectedVoice) utterance.voice = selectedVoice;
+      utterance.onend = () => left > 0 ? setTimeout(speakNext, REPEAT_GAP_MS) : resolve();
+      utterance.onerror = resolve;
+      synth.speak(utterance);
+    };
+    speakNext();
+  });
+}
+
+function currentCard() {
+  return schedule[stepIndex] || null;
+}
+
+function render() {
+  const card = currentCard();
+  if (!card) {
+    frontTextEl.textContent = "No cards loaded";
+    backTextEl.textContent = "";
+    backTextEl.classList.add("hidden");
+    metaEl.textContent = "";
+    return;
+  }
+
+  frontTextEl.textContent = card.front;
+  backTextEl.innerHTML = formatBack(card.back);
+  backTextEl.classList.toggle("hidden", !showingBack);
+  const blockNumber = (Number(blockSelect.value) || 0) + 1;
+  metaEl.textContent = `Block ${blockNumber} card ${card.blockIndex}/${blockCards.length} - Global card ${card.globalIndex}/${PRELOADED_CARDS.length} - Step ${stepIndex + 1}/${schedule.length}`;
+}
+
+function setControlsEnabled(enabled) {
+  pauseBtn.disabled = !enabled;
+  prevBtn.disabled = !enabled;
+  nextBtn.disabled = !enabled;
+  replayBtn.disabled = !enabled;
+}
+
+function scheduleAfter(seconds, callback) {
+  clearTimer();
+  timer = setTimeout(callback, seconds * 1000);
+}
+
+function playCurrentFromFront() {
+  const card = currentCard();
+  if (!card) return;
+  paused = false;
+  showingBack = false;
+  render();
+  cancelSpeech();
+  speak(card.front, Number(frontRepeatSel.value)).then(() => {
+    if (paused || !autoModeChk.checked) return;
+    scheduleAfter(clampNumber(thinkDelayInput.value, 1, 30, 8), playBack);
+  });
+}
+
+function playBack() {
+  const card = currentCard();
+  if (!card) return;
+  showingBack = true;
+  render();
+  cancelSpeech();
+  speak(card.back, Number(backRepeatSel.value)).then(() => {
+    if (paused || !autoModeChk.checked) return;
+    scheduleAfter(clampNumber(nextDelayInput.value, 1, 30, 5), nextStep);
+  });
+}
+
+function nextStep() {
+  if (!schedule.length) return;
+  if (stepIndex >= schedule.length - 1) {
+    const nextBlockIndex = (Number(blockSelect.value) || 0) + 1;
+    if (nextBlockIndex < blockSelect.options.length) {
+      blockSelect.value = String(nextBlockIndex);
+      blockCards = getSelectedBlock();
+      schedule = buildReviewSchedule(blockCards);
+      stepIndex = 0;
+      showingBack = false;
+      paused = false;
+      setControlsEnabled(schedule.length > 0);
+      playCurrentFromFront();
+      return;
+    }
+    paused = true;
+    clearTimer();
+    autoModeChk.checked = false;
+    showingBack = true;
+    render();
+    return;
+  }
+  stepIndex += 1;
+  playCurrentFromFront();
+}
+
+function previousStep() {
+  if (!schedule.length) return;
+  stepIndex = Math.max(0, stepIndex - 1);
+  playCurrentFromFront();
+}
+
+function resetPreparedSession() {
+  clearTimer();
+  cancelSpeech();
+  blockCards = getSelectedBlock();
+  schedule = buildReviewSchedule(blockCards);
+  stepIndex = 0;
+  showingBack = false;
+  paused = true;
+  setControlsEnabled(false);
+  render();
+}
+
+function startSession() {
+  clearTimer();
+  cancelSpeech();
+  blockCards = getSelectedBlock();
+  schedule = buildReviewSchedule(blockCards);
+  stepIndex = 0;
+  showingBack = false;
+  paused = false;
+  setControlsEnabled(schedule.length > 0);
+  if (autoModeChk.checked) playCurrentFromFront();
+  else render();
+}
+
+startBtn.addEventListener("click", startSession);
+pauseBtn.addEventListener("click", () => {
+  paused = true;
+  clearTimer();
+  cancelSpeech();
+});
+prevBtn.addEventListener("click", previousStep);
+nextBtn.addEventListener("click", nextStep);
+replayBtn.addEventListener("click", playCurrentFromFront);
+blockSelect.addEventListener("change", resetPreparedSession);
+scheduleModeSel.addEventListener("change", resetPreparedSession);
+shuffleBlockChk.addEventListener("change", resetPreparedSession);
+blockSizeSel.addEventListener("change", () => {
+  populateBlocks();
+  resetPreparedSession();
+});
+autoModeChk.addEventListener("change", () => {
+  clearTimer();
+  if (autoModeChk.checked && schedule.length) playCurrentFromFront();
+});
+answerSizeInput.addEventListener("input", updateAnswerSize);
+
+if (typeof synth.onvoiceschanged !== "undefined") synth.onvoiceschanged = populateVoices;
+populateBlocks();
+populateVoices();
+updateAnswerSize();
+blockCards = getSelectedBlock();
+schedule = buildReviewSchedule(blockCards);
+render();
+</script>
+</body>
+</html>
