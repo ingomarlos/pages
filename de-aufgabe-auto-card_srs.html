@@ -59,8 +59,9 @@
       <div>
         <label>Repetition mode</label>
         <select id="scheduleMode">
-          <option value="intensive" selected>Intensive - new stuff</option>
+          <option value="intensive">Intensive - new stuff</option>
           <option value="reminder">Reminder - lighter review</option>
+          <option value="light" selected>Light - long questions</option>
         </select>
       </div>
       <div>
@@ -294,10 +295,26 @@ function buildReminderSchedule(items) {
   return order.map(cardIndex => items[cardIndex]);
 }
 
+function buildLightSchedule(items) {
+  if (!items.length) return [];
+  const order = [];
+  const pushRange = (start, end) => order.push(...addRange(items, start, end));
+
+  for (let start = 1; start <= items.length; start += 20) {
+    const end = Math.min(start + 19, items.length);
+    const mid = Math.min(start + 9, end);
+    pushRange(start, end);
+    pushRange(start, mid);
+    if (mid < end) pushRange(mid + 1, end);
+  }
+
+  return order.map(cardIndex => items[cardIndex]);
+}
+
 function buildReviewSchedule(items) {
-  return scheduleModeSel.value === "reminder"
-    ? buildReminderSchedule(items)
-    : buildIntensiveSchedule(items);
+  if (scheduleModeSel.value === "light") return buildLightSchedule(items);
+  if (scheduleModeSel.value === "reminder") return buildReminderSchedule(items);
+  return buildIntensiveSchedule(items);
 }
 
 function populateVoices() {
