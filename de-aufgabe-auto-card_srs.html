@@ -125,11 +125,626 @@
 <script>
 // Keep each card as one line. The app splits it at "Antwort:".
 const PRELOADED_CARDS = [
-  "Aufgabe 1: „In Deutschland dürfen Menschen offen etwas gegen die Regierung sagen, weil ...“ Antwort: hier Meinungsfreiheit gilt. Das bedeutet, dass man in Deutschland seine Meinung frei sagen darf. Man darf auch die Regierung kritisieren. Das ist erlaubt, solange man dabei nicht gegen Gesetze verstößt. Meinungsfreiheit heißt also: Ich darf offen sagen, was ich denke.",
-  "Aufgabe 2: „In Deutschland können Eltern bis zum 14. Lebensjahr ihres Kindes entscheiden, ob es in der Schule am ...“ Antwort: Religionsunterricht teilnimmt. Das bedeutet, dass Eltern in Deutschland bis zu diesem Alter mitentscheiden dürfen, ob ihr Kind am Religionsunterricht teilnimmt. Später kann das Kind in dieser Frage mehr selbst entscheiden. Es geht hier also um den Religionsunterricht und nicht um andere Fächer.",
-  "Aufgabe 3: „Deutschland ist ein Rechtsstaat. Was ist damit gemeint?“ Antwort: Alle Einwohnerinnen und Einwohner und der Staat müssen sich an die Gesetze halten. Das bedeutet, dass die Gesetze in Deutschland für alle gelten. Nicht nur die Menschen müssen die Regeln beachten, sondern auch der Staat und seine Behörden. Niemand darf einfach machen, was er will. Genau das meint man mit Rechtsstaat.",
-  "Aufgabe 4: „Welches Recht gehört zu den Grundrechten in Deutschland?“ Antwort: Meinungsfreiheit. Das bedeutet, dass jeder Mensch in Deutschland seine Meinung frei sagen darf. Grundrechte sind besonders wichtige Rechte, die den Menschen schützen. Die Meinungsfreiheit gehört dazu und ist deshalb ein Grundrecht.",
-  "Aufgabe 5: „Wahlen in Deutschland sind frei. Was bedeutet das?“ Antwort: Die Wählerin oder der Wähler darf bei der Wahl weder beeinflusst noch zu einer bestimmten Stimmabgabe gezwungen werden und keine Nachteile durch die Wahl haben. Das bedeutet, dass jeder bei einer Wahl selbst entscheiden darf. Niemand darf Druck machen, niemand darf jemanden zwingen, und niemand darf Nachteile bekommen, weil er eine bestimmte Partei wählt. Frei wählen heißt also: Jeder entscheidet selbst und ohne Angst."
+"Aufgabe 1: „In Deutschland dürfen Menschen offen etwas gegen die Regierung sagen, weil …“ ; hier Meinungsfreiheit gilt. Das bedeutet, dass man in Deutschland seine Meinung frei sagen darf. Man darf auch die Regierung kritisieren. Das ist erlaubt, solange man dabei nicht gegen Gesetze verstößt. Meinungsfreiheit heißt also: Ich darf offen sagen, was ich denke.",
+
+"Aufgabe 2: „In Deutschland können Eltern bis zum 14. Lebensjahr ihres Kindes entscheiden, ob es in der Schule am …“ ; Religionsunterricht teilnimmt. Das bedeutet, dass Eltern in Deutschland bis zu diesem Alter mitentscheiden dürfen, ob ihr Kind am Religionsunterricht teilnimmt. Später kann das Kind in dieser Frage mehr selbst entscheiden. Es geht hier also um den Religionsunterricht und nicht um andere Fächer.",
+
+"Aufgabe 3: „Deutschland ist ein Rechtsstaat. Was ist damit gemeint?“ ; Alle Einwohnerinnen und Einwohner und der Staat müssen sich an die Gesetze halten. Das bedeutet, dass die Gesetze in Deutschland für alle gelten. Nicht nur die Menschen müssen die Regeln beachten, sondern auch der Staat und seine Behörden. Niemand darf einfach machen, was er will. Genau das meint man mit Rechtsstaat.",
+
+"Aufgabe 4: „Welches Recht gehört zu den Grundrechten in Deutschland?“ ; Meinungsfreiheit. Das bedeutet, dass jeder Mensch in Deutschland seine Meinung frei sagen darf. Grundrechte sind besonders wichtige Rechte, die den Menschen schützen. Die Meinungsfreiheit gehört dazu und ist deshalb ein Grundrecht.",
+
+"Aufgabe 5: „Wahlen in Deutschland sind frei. Was bedeutet das?“ ; Die Wählerin oder der Wähler darf bei der Wahl weder beeinflusst noch zu einer bestimmten Stimmabgabe gezwungen werden und keine Nachteile durch die Wahl haben. Das bedeutet, dass jeder bei einer Wahl selbst entscheiden darf. Niemand darf Druck machen, niemand darf jemanden zwingen, und niemand darf Nachteile bekommen, weil er eine bestimmte Partei wählt. Frei wählen heißt also: Jeder entscheidet selbst und ohne Angst.",
+
+"Aufgabe 6: „Wie heißt die deutsche Verfassung?“ ; Grundgesetz. Das Grundgesetz ist die wichtigste gesetzliche Grundlage in Deutschland. Darin stehen wichtige Regeln für den Staat und wichtige Rechte für die Menschen. Deshalb heißt die deutsche Verfassung Grundgesetz.",
+
+"Aufgabe 7: „Welches Recht gehört zu den Grundrechten, die nach der deutschen Verfassung garantiert werden? Das Recht auf …“ ; Glaubens- und Gewissensfreiheit. Das bedeutet, dass jeder Mensch in Deutschland glauben darf, was er möchte. Man darf eine Religion haben oder keine Religion haben. Man darf auch nach seinem Gewissen leben. Dieses Recht ist ein Grundrecht.",
+
+"Aufgabe 8: „Was steht nicht im Grundgesetz von Deutschland?“ ; Alle sollen gleich viel Geld haben. Das bedeutet, dass im Grundgesetz nicht steht, dass alle Menschen gleich reich sein müssen. Im Grundgesetz steht aber, dass alle Menschen vor dem Gesetz gleich sind und gleiche Rechte haben. Gleichheit vor dem Gesetz ist also etwas anderes als gleich viel Geld.",
+
+"Aufgabe 9: „Welches Grundrecht gilt in Deutschland nur für Ausländerinnen und Ausländer? Das Grundrecht auf …“ ; Asyl. Asyl bedeutet Schutz für Menschen, die in ihrem Heimatland verfolgt werden oder in großer Gefahr sind. Dieses Recht ist für Menschen wichtig, die aus einem anderen Land nach Deutschland kommen und Schutz suchen. Darum ist hier Asyl die richtige Die richtige Antwort ist.",
+
+"Aufgabe 10: „Was ist mit dem deutschen Grundgesetz vereinbar?“ ; die Geldstrafe. Das bedeutet, dass eine Geldstrafe in Deutschland erlaubt ist. Andere Strafen wie Folter oder Todesstrafe sind nicht mit dem Grundgesetz vereinbar. Das Grundgesetz schützt die Würde und das Leben des Menschen. Deshalb ist die Geldstrafe die richtige Die richtige Antwort ist.",
+
+"Aufgabe 11: „Wie wird die Verfassung der Bundesrepublik Deutschland genannt?“ ; Grundgesetz. Das ist der offizielle Name der Verfassung von Deutschland. Im Grundgesetz stehen die wichtigsten Regeln für den Staat und die Grundrechte der Menschen. Darum heißt die Verfassung der Bundesrepublik Deutschland Grundgesetz.",
+
+"Aufgabe 12: „Eine Partei im Deutschen Bundestag will die Pressefreiheit abschaffen. Ist das möglich?“ ; Nein, denn die Pressefreiheit ist ein Grundrecht. Sie kann nicht abgeschafft werden. Das bedeutet, dass freie Zeitungen und freie Medien in Deutschland besonders geschützt sind. Die Presse darf berichten und Kritik üben. Weil Pressefreiheit ein Grundrecht ist, kann sie nicht einfach abgeschafft werden.",
+
+"Aufgabe 13: „Im Parlament steht der Begriff ‚Opposition‘ für …“ ; alle Abgeordneten, die nicht zu der Regierungspartei oder den Regierungsparteien gehören. Das bedeutet, dass im Parlament nicht alle Parteien zur Regierung gehören. Die Parteien, die nicht mitregieren, nennt man Opposition. Sie kontrollieren die Regierung und kritisieren sie oft. Das ist wichtig für die Demokratie.",
+
+"Aufgabe 14: „Meinungsfreiheit in Deutschland heißt, dass ich …“ ; meine Meinung im Internet äußern kann. Das bedeutet, dass man seine Meinung in Deutschland sagen oder schreiben darf, auch im Internet. Aber Meinungsfreiheit hat Grenzen. Man darf zum Beispiel nicht beleidigen oder verbotene Symbole öffentlich zeigen. Trotzdem gilt: Die eigene Meinung darf man grundsätzlich auch online äußern.",
+
+"Aufgabe 15: „Was verbietet das deutsche Grundgesetz?“ ; Zwangsarbeit. Zwangsarbeit bedeutet, dass Menschen gegen ihren Willen arbeiten müssen. Das ist in Deutschland verboten. Das Grundgesetz schützt die Freiheit des Menschen. Deshalb ist Zwangsarbeit nicht erlaubt.",
+
+"Aufgabe 16: „Wann ist die Meinungsfreiheit in Deutschland eingeschränkt?“ ; bei der öffentlichen Verbreitung falscher Behauptungen über einzelne Personen. Das bedeutet, dass man nicht einfach falsche Dinge über andere Menschen öffentlich sagen darf. Solche Aussagen können anderen schaden. Deshalb endet die Meinungsfreiheit dort, wo falsche Behauptungen die Rechte anderer verletzen.",
+
+"Aufgabe 17: „Die deutschen Gesetze verbieten …“ ; Ungleichbehandlung der Bürgerinnen und Bürger durch den Staat. Das bedeutet, dass der Staat Menschen gleich behandeln muss. Er darf nicht ohne guten Grund einzelne Menschen schlechter behandeln als andere. Gerechtigkeit und Gleichbehandlung sind wichtige Grundideen in Deutschland.",
+
+"Aufgabe 18: „Welches Grundrecht ist in Artikel 1 des Grundgesetzes der Bundesrepublik Deutschland garantiert?“ ; die Unantastbarkeit der Menschenwürde. Das bedeutet, dass jeder Mensch einen besonderen Wert hat. Dieser Wert muss geschützt werden. Artikel 1 ist sehr wichtig, weil dort steht: Die Würde des Menschen ist unantastbar.",
+
+"Aufgabe 19: „Was versteht man unter dem Recht der ‚Freizügigkeit‘ in Deutschland?“ ; Man darf sich seinen Wohnort selbst aussuchen. Das bedeutet, dass man in Deutschland selbst entscheiden darf, wo man wohnen möchte. Man kann also umziehen und an einem anderen Ort leben. Freizügigkeit gibt den Menschen Freiheit im Alltag.",
+
+"Aufgabe 20: „Eine Partei in Deutschland verfolgt das Ziel, eine Diktatur zu errichten. Sie ist dann …“ ; verfassungswidrig. Das bedeutet, dass eine Diktatur nicht zur deutschen Verfassung passt. Deutschland ist eine Demokratie. Wer eine Diktatur will und die Demokratie abschaffen möchte, handelt gegen die Verfassung. Deshalb ist so ein Ziel verfassungswidrig.",
+
+"Aufgabe 21: „Welches ist das Wappen der Bundesrepublik Deutschland?“ ; Bild 4. Das deutsche Wappen zeigt einen Adler. Der Adler ist das offizielle Wappentier der Bundesrepublik Deutschland. Bei dieser Frage muss man also das Bild auswählen, auf dem der Adler zu sehen ist.",
+
+"Aufgabe 22: „Was für eine Staatsform hat Deutschland?“ ; Republik. Das bedeutet, dass Deutschland keinen König und keine Königin als Staatsoberhaupt hat. Der Staat gehört nicht einer Familie. Die Menschen wählen politische Vertreter. Darum ist Deutschland eine Republik.",
+
+"Aufgabe 23: „In Deutschland sind die meisten Erwerbstätigen …“ ; bei einer Firma oder Behörde beschäftigt. Das bedeutet, dass die meisten Menschen in Deutschland als Angestellte arbeiten. Sie arbeiten also für eine Firma oder für eine Behörde. Nur ein kleinerer Teil ist selbstständig oder arbeitet im Familienunternehmen.",
+
+"Aufgabe 24: „Wie viele Bundesländer hat die Bundesrepublik Deutschland?“ ; 16. Deutschland besteht aus 16 Bundesländern. Jedes Bundesland hat einen eigenen Namen und eine eigene Regierung. Zusammen bilden diese 16 Länder die Bundesrepublik Deutschland.",
+
+"Aufgabe 25: „Was ist kein Bundesland der Bundesrepublik Deutschland?“ ; Elsass-Lothringen. Das bedeutet, dass Elsass-Lothringen nicht zu den deutschen Bundesländern gehört. Die anderen genannten Namen sind echte deutsche Bundesländer. Deshalb ist Elsass-Lothringen die richtige Die richtige Antwort ist.",
+
+"Aufgabe 26: „Deutschland ist …“ ; ein demokratischer und sozialer Bundesstaat. Das bedeutet, dass die Menschen in Deutschland wählen dürfen und dass der Staat auch soziale Die richtige Antwort istung hat. Außerdem besteht Deutschland aus Bundesländern. Deshalb ist Deutschland demokratisch, sozial und ein Bundesstaat.",
+
+"Aufgabe 27: „Deutschland ist …“ ; ein Bundesstaat. Das bedeutet, dass Deutschland nicht nur eine zentrale Regierung hat, sondern auch aus einzelnen Bundesländern besteht. Diese Bundesländer haben eigene Aufgaben und eigene Regierungen. Darum ist Deutschland ein Bundesstaat.",
+
+"Aufgabe 28: „Wer wählt in Deutschland die Abgeordneten zum Bundestag?“ ; das wahlberechtigte Volk. Das bedeutet, dass die Bürgerinnen und Bürger mit Wahlrecht die Abgeordneten des Bundestages wählen. Nicht das Militär, nicht die Wirtschaft und nicht die Verwaltung entscheiden darüber, sondern die Menschen, die wählen dürfen.",
+
+"Aufgabe 29: „Welches Tier ist das Wappentier der Bundesrepublik Deutschland?“ ; Adler. Der Adler ist ein wichtiges Symbol des deutschen Staates. Man sieht ihn oft auf offiziellen Dokumenten, Gebäuden und Zeichen. Deshalb ist der Adler das Wappentier Deutschlands.",
+
+"Aufgabe 30: „Was ist kein Merkmal unserer Demokratie?“ ; Pressezensur. Das bedeutet, dass der Staat in einer Demokratie nicht bestimmen darf, was Zeitungen oder Medien sagen und schreiben dürfen. Freie Medien und freie Berichte gehören zur Demokratie. Pressezensur passt deshalb nicht zu einer Demokratie.",
+
+"Aufgabe 31: „Die Zusammenarbeit von Parteien zur Bildung einer Regierung nennt man in Deutschland …“ ; Koalition. Das bedeutet, dass oft eine Partei allein nicht genug Stimmen hat, um zu regieren. Dann arbeiten zwei oder mehr Parteien zusammen, einigen sich auf gemeinsame Politik und bilden zusammen die Regierung. Diese Zusammenarbeit nennt man Koalition.",
+
+"Aufgabe 32: „Was ist keine staatliche Gewalt in Deutschland?“ ; Presse. In Deutschland gibt es drei staatliche Gewalten: Gesetzgebung, Regierung und Rechtsprechung. Die Presse gehört nicht dazu. Sie ist frei und berichtet über Politik und kontrolliert oft kritisch, was im Staat passiert, aber sie regiert nicht selbst.",
+
+"Aufgabe 33: „Welche Aussage ist richtig? In Deutschland …“ ; sind Staat und Religionsgemeinschaften voneinander getrennt. Das bedeutet, dass der Staat in Deutschland nicht zu einer Religion gehört und nicht von einer Religion abhängt. Religionsgemeinschaften dürfen frei existieren, aber sie bilden nicht den Staat. So bleibt der Staat neutral.",
+
+"Aufgabe 34: „Was ist Deutschland nicht?“ ; eine Monarchie. Das bedeutet, dass Deutschland keinen König und keine Königin hat. Deutschland ist also keine Monarchie, sondern eine Demokratie, ein Rechtsstaat und ein Sozialstaat.",
+
+"Aufgabe 35: „Womit finanziert der deutsche Staat die Sozialversicherung?“ ; Sozialabgaben. Das bedeutet, dass die Sozialversicherung vor allem durch Beiträge von Arbeitnehmern und Arbeitgebern bezahlt wird. Mit diesem Geld werden wichtige Leistungen bezahlt, zum Beispiel bei Krankheit, Arbeitslosigkeit oder im Alter.",
+
+"Aufgabe 36: „Welche Maßnahme schafft in Deutschland soziale Sicherheit?“ ; die Krankenversicherung. Das bedeutet, dass Menschen Hilfe bekommen, wenn sie krank sind und zum Arzt oder ins Krankenhaus müssen. Die Krankenversicherung übernimmt wichtige Kosten und gibt deshalb soziale Sicherheit im Alltag.",
+
+"Aufgabe 37: „Wie werden die Regierungschefinnen/Regierungschefs der meisten Bundesländer in Deutschland genannt?“ ; Ministerpräsidentin/Ministerpräsident. Das ist der normale Titel für die Chefin oder den Chef einer Landesregierung in den meisten Bundesländern. Nur einige Stadtstaaten haben andere Bezeichnungen.",
+
+"Aufgabe 38: „Die Bundesrepublik Deutschland ist ein demokratischer und sozialer …“ ; Bundesstaat. Das bedeutet, dass Deutschland aus dem Bund und den Bundesländern besteht. Demokratisch heißt, dass die Menschen wählen dürfen, und sozial heißt, dass der Staat Menschen in wichtigen Lebenssituationen unterstützt. Zusammen heißt das: Deutschland ist ein demokratischer und sozialer Bundesstaat.",
+
+"Aufgabe 39: „Was hat jedes deutsche Bundesland?“ ; eine eigene Regierung. Das bedeutet, dass jedes Bundesland politische Aufgaben hat und dafür eine eigene Regierung besitzt. Deutschland ist nämlich ein Bundesstaat. Die Bundesländer haben aber keine eigene Währung und keine eigene Armee.",
+
+"Aufgabe 40: „Mit welchen Worten beginnt die deutsche Nationalhymne?“ ; Einigkeit und Recht und Freiheit … Diese Worte stehen am Anfang der deutschen Nationalhymne und sind in Deutschland sehr bekannt. Sie stehen für Zusammenhalt, Recht und Freiheit.",
+
+"Aufgabe 41: „Warum gibt es in einer Demokratie mehr als eine Partei?“ ; weil dadurch die unterschiedlichen Meinungen der Bürgerinnen und Bürger vertreten werden. Das bedeutet, dass Menschen in einer Demokratie nicht alle gleich denken. Verschiedene Parteien haben verschiedene Ideen und Ziele. So können viele politische Meinungen vertreten werden.",
+
+"Aufgabe 42: „Wer beschließt in Deutschland ein neues Gesetz?“ ; das Parlament. Das bedeutet, dass neue Gesetze im Parlament besprochen und beschlossen werden. Dort wird über Regeln diskutiert und abgestimmt. So entstehen neue Gesetze in Deutschland.",
+
+"Aufgabe 43: „Wann kann in Deutschland eine Partei verboten werden?“ ; wenn sie gegen die Verfassung kämpft. Das bedeutet, dass eine Partei nicht versuchen darf, die Demokratie oder die Grundrechte zu zerstören. Wenn sie gegen die Verfassung arbeitet, kann sie verboten werden.",
+
+"Aufgabe 44: „Wen kann man als Bürgerin/Bürger in Deutschland nicht direkt wählen?“ ; die Bundespräsidentin/den Bundespräsidenten. Das bedeutet, dass die Bürgerinnen und Bürger den Bundestag, die Landtage und das EU-Parlament wählen können, aber nicht direkt die Bundespräsidentin oder den Bundespräsidenten. Dieses Amt wird von der Bundesversammlung gewählt.",
+
+"Aufgabe 45: „Zu welcher Versicherung gehört die Pflegeversicherung?“ ; Sozialversicherung. Das bedeutet, dass die Pflegeversicherung ein Teil des sozialen Sicherungssystems ist. Sie hilft Menschen, die im Alltag wegen Alter oder Krankheit viel Hilfe brauchen.",
+
+"Aufgabe 46: „Der deutsche Staat hat viele Aufgaben. Welche Aufgabe gehört dazu?“ ; Er baut Straßen und Schulen. Das bedeutet, dass der Staat für wichtige öffentliche Dinge zuständig ist, die alle Menschen brauchen. Dazu gehören zum Beispiel Straßen, Schulen und andere Einrichtungen.",
+
+"Aufgabe 47: „Der deutsche Staat hat viele Aufgaben. Welche Aufgabe gehört nicht dazu?“ ; Er bezahlt für alle Staatsangehörigen Urlaubsreisen. Das bedeutet, dass der Staat zwar in wichtigen Bereichen hilft, zum Beispiel bei Familien, Kultur oder Sport, aber nicht private Urlaubsreisen für alle Menschen bezahlt.",
+
+"Aufgabe 48: „Welches Organ gehört nicht zu den Verfassungsorganen Deutschlands?“ ; die Bürgerversammlung. Das bedeutet, dass Deutschland feste Verfassungsorgane hat, zum Beispiel den Bundesrat, die Bundesregierung und die Bundespräsidentin oder den Bundespräsidenten. Eine Bürgerversammlung gehört nicht zu diesen offiziellen Organen.",
+
+"Aufgabe 49: „Wer bestimmt in Deutschland die Schulpolitik?“ ; die Bundesländer. Das bedeutet, dass die Bundesländer für viele Fragen rund um Schule zuständig sind. Deshalb können Schulformen oder Ferienzeiten von Bundesland zu Bundesland unterschiedlich sein.",
+
+"Aufgabe 50: „Die Wirtschaftsform in Deutschland nennt man …“ ; soziale Marktwirtschaft. Das bedeutet, dass Unternehmen und Menschen wirtschaftlich frei handeln können, der Staat aber gleichzeitig auf soziale Sicherheit achtet. Darum heißt die Wirtschaftsform in Deutschland soziale Marktwirtschaft.",
+
+"Aufgabe 51: „Zu einem demokratischen Rechtsstaat gehört es nicht, dass …“ ; Menschen von einer Privatpolizei ohne Grund verhaftet werden. Das bedeutet, dass in einem Rechtsstaat niemand einfach ohne Grund festgenommen werden darf, besonders nicht von einer privaten Gruppe. Freiheit und Recht müssen geschützt werden.",
+
+"Aufgabe 52: „Was bedeutet ‚Volkssouveränität‘? Alle Staatsgewalt geht vom ...“ ; Volke aus. Das bedeutet, dass die Macht im Staat vom Volk kommt. Die Bürgerinnen und Bürger wählen ihre Vertreter und sind damit die Grundlage der staatlichen Macht.",
+
+"Aufgabe 53: „Was bedeutet ‚Rechtsstaat‘ in Deutschland?“ ; Der Staat muss die Gesetze einhalten. Das bedeutet, dass nicht nur die Bürger Regeln beachten müssen, sondern auch der Staat. Er darf nicht einfach tun, was er will, sondern muss immer nach dem Gesetz handeln.",
+
+"Aufgabe 54: „Was ist keine staatliche Gewalt in Deutschland?“ ; Direktive. In Deutschland gibt es drei staatliche Gewalten: Legislative, Exekutive und Judikative. Direktive gehört nicht dazu und ist deshalb keine staatliche Gewalt.",
+
+"Aufgabe 55: „Was zeigt dieses Bild?“ ; den Bundestagssitz in Berlin. Das bedeutet, dass auf dem Bild das Gebäude des Deutschen Bundestages in Berlin zu sehen ist. Dort arbeiten die Abgeordneten des Bundestages, und das Gebäude ist sehr wichtig für die Politik in Deutschland.",
+
+"Aufgabe 56: „Welches Amt gehört in Deutschland zur Gemeindeverwaltung?“ ; Ordnungsamt. Das bedeutet, dass das Ordnungsamt Teil der lokalen Verwaltung in einer Stadt oder Gemeinde ist. Es kümmert sich um Ordnung und bestimmte Regeln vor Ort.",
+
+"Aufgabe 57: „Wer wird meistens zur Präsidentin/zum Präsidenten des Deutschen Bundestages gewählt?“ ; eine Abgeordnete/ein Abgeordneter der stärksten Fraktion. Das bedeutet, dass dieses Amt meistens an eine Person aus der größten politischen Gruppe im Bundestag geht.",
+
+"Aufgabe 58: „Wer ernennt in Deutschland die Ministerinnen/die Minister der Bundesregierung?“ ; die Bundespräsidentin/der Bundespräsident. Das bedeutet, dass die Ministerinnen und Minister offiziell von der Bundespräsidentin oder vom Bundespräsidenten ernannt werden. So wird die Regierung formell eingesetzt.",
+
+"Aufgabe 59: „Vor wie vielen Jahren gab es erstmals eine jüdische Gemeinde auf dem Gebiet des heutigen Deutschlands?“ ; vor etwa 1700 Jahren. Das bedeutet, dass jüdisches Leben in Deutschland schon sehr lange Teil der Geschichte ist und nicht erst seit kurzer Zeit existiert.",
+
+"Aufgabe 60: „In Deutschland gehören der Bundestag und der Bundesrat zur …“ ; Legislative. Das bedeutet, dass Bundestag und Bundesrat zur gesetzgebenden Gewalt gehören. Sie sind wichtig, wenn neue Gesetze gemacht und beschlossen werden.",
+
+
+"Aufgabe 61: „Was bedeutet ‚Volkssouveränität‘?“ ; Die Staatsgewalt geht vom Volke aus. Das bedeutet, dass die politische Macht in Deutschland von den Bürgerinnen und Bürgern kommt. Das Volk wählt seine Vertreter und gibt dem Staat so seine demokratische Grundlage.",
+
+"Aufgabe 62: „Wenn das Parlament eines deutschen Bundeslandes gewählt wird, nennt man das …“ ; Landtagswahl. Das bedeutet, dass die Wahl des Parlaments in einem Bundesland Landtagswahl heißt. Mit dieser Wahl bestimmen die Bürgerinnen und Bürger die Politik ihres Bundeslandes.",
+
+"Aufgabe 63: „Was gehört in Deutschland nicht zur Exekutive?“ ; die Gerichte. Das bedeutet, dass die Gerichte nicht zur ausführenden Gewalt gehören. Polizei, Finanzamt und Ministerien gehören zur Exekutive, die Gerichte aber zur Rechtsprechung.",
+
+"Aufgabe 64: „Die Bundesrepublik Deutschland ist heute gegliedert in …“ ; Bund, Länder und Kommunen. Das bedeutet, dass Deutschland politisch in diese drei Ebenen aufgebaut ist. So ist der Staat organisiert.",
+
+"Aufgabe 65: „Es gehört nicht zu den Aufgaben des Deutschen Bundestages, …“ ; das Bundeskabinett zu bilden. Das bedeutet, dass der Bundestag zwar Gesetze behandelt, die Bundesregierung kontrolliert und die Bundeskanzlerin oder den Bundeskanzler wählt, aber nicht selbst das Bundeskabinett bildet.",
+
+"Aufgabe 66: „Welche Städte haben die größten jüdischen Gemeinden in Deutschland?“ ; Berlin und München. Das bedeutet, dass die größten jüdischen Gemeinden heute in diesen beiden Städten liegen. Diese Städte sind wichtige Zentren jüdischen Lebens in Deutschland.",
+
+"Aufgabe 67: „Was ist in Deutschland vor allem eine Aufgabe der Bundesländer?“ ; Schulpolitik. Das bedeutet, dass die Bundesländer besonders für Schule und Bildung zuständig sind. Deshalb können sich Schulsysteme und Regeln von Bundesland zu Bundesland unterscheiden.",
+
+"Aufgabe 68: „Warum kontrolliert der Staat in Deutschland das Schulwesen?“ ; weil es nach dem Grundgesetz seine Aufgabe ist. Das bedeutet, dass Schule eine staatliche Aufgabe ist und der Staat dafür verantwortlich ist.",
+
+"Aufgabe 69: „Die Bundesrepublik Deutschland hat einen dreistufigen Verwaltungsaufbau. Wie heißt die unterste politische Stufe?“ ; Gemeinden. Das bedeutet, dass im Aufbau von Bund, Ländern und Kommunen die Gemeinden die unterste politische Ebene sind. Dort findet ein großer Teil des Alltags der Menschen statt.",
+
+"Aufgabe 70: „Was gehört zu den Aufgaben der deutschen Bundespräsidentin/des deutschen Bundespräsidenten?“ ; Sie/Er schlägt die Kanzlerin/den Kanzler zur Wahl vor. Das bedeutet, dass die Bundespräsidentin oder der Bundespräsident nicht selbst die Regierung führt, sondern unter anderem die Kanzlerkandidatin oder den Kanzlerkandidaten dem Bundestag zur Wahl vorschlägt.",
+
+"Aufgabe 71: „Wo hält sich die deutsche Bundeskanzlerin/der deutsche Bundeskanzler am häufigsten auf?“ ; in Berlin, weil sich dort das Bundeskanzleramt und der Bundestag befinden. Das bedeutet, dass Berlin der wichtigste Arbeitsort der Bundeskanzlerin oder des Bundeskanzlers ist, weil dort die zentralen politischen Institutionen des Bundes sitzen.",
+
+"Aufgabe 72: „Wie heißt die jetzige Bundeskanzlerin/der jetzige Bundeskanzler von Deutschland?“ ; Friedrich Merz. Die Bundesregierung führt ihn als Bundeskanzler der Bundesrepublik Deutschland, auf den offiziellen Regierungsseiten steht, dass er seit dem 6. Mai 2025 Bundeskanzler ist.",
+
+"Aufgabe 73: „Die beiden größten Fraktionen im Deutschen Bundestag heißen zurzeit …“ ; CDU/CSU und AfD. Der Bundestag führt für den 21. Deutschen Bundestag die Fraktionen CDU/CSU, SPD, AfD, Bündnis 90/Die Grünen und Die Linke, nach der aktuellen Sitzverteilung sind CDU/CSU und AfD die beiden größten Fraktionen.",
+
+"Aufgabe 74: „Wie heißt das Parlament für ganz Deutschland?“ ; Bundestag. Das bedeutet, dass das Parlament auf Bundesebene in Deutschland Deutscher Bundestag heißt. Dort sitzen die Abgeordneten für das ganze Land.",
+
+"Aufgabe 75: „Wie heißt Deutschlands heutiges Staatsoberhaupt?“ ; Frank-Walter Steinmeier. Auf der offiziellen Seite des Bundespräsidenten wird er als amtierender Präsident der Bundesrepublik Deutschland geführt.",
+
+"Aufgabe 76: „Was bedeutet die Abkürzung CDU in Deutschland?“ ; Christlich Demokratische Union. Das ist der vollständige Name der Partei CDU.",
+
+"Aufgabe 77: „Was ist die Bundeswehr?“ ; die deutsche Armee. Das bedeutet, dass die Bundeswehr die Streitkräfte Deutschlands sind.",
+
+"Aufgabe 78: „Was bedeutet die Abkürzung SPD?“ ; Sozialdemokratische Partei Deutschlands. Das ist der offizielle vollständige Name der Partei SPD.",
+
+"Aufgabe 79: „Was bedeutet die Abkürzung FDP in Deutschland?“ ; Freie Demokratische Partei. Das ist der vollständige Name der Partei FDP.",
+
+"Aufgabe 80: „Welches Gericht in Deutschland ist zuständig für die Auslegung des Grundgesetzes?“ ; Bundesverfassungsgericht. Das bedeutet, dass dieses Gericht darüber entscheidet, wie das Grundgesetz zu verstehen ist und ob staatliches Handeln mit der Verfassung vereinbar ist.",
+
+"Aufgabe 81: „Wer wählt die Bundeskanzlerin/den Bundeskanzler in Deutschland?“ ; der Bundestag. Das bedeutet, dass nicht das Volk direkt und auch nicht der Bundesrat oder die Bundesversammlung die Kanzlerin oder den Kanzler wählen, sondern der Deutsche Bundestag.",
+
+"Aufgabe 82: „Wer leitet das deutsche Bundeskabinett?“ ; die Bundeskanzlerin/der Bundeskanzler. Das bedeutet, dass die Leitung der Bundesregierung bei der Kanzlerin oder beim Kanzler liegt. Diese Person bestimmt die politische Richtung der Regierung.",
+
+"Aufgabe 83: „Wer wählt die deutsche Bundeskanzlerin/den deutschen Bundeskanzler?“ ; der Bundestag. Das ist derselbe Grund wie bei Aufgabe 81: Die Wahl der Kanzlerin oder des Kanzlers erfolgt im Deutschen Bundestag.",
+
+"Aufgabe 84: „Welche Hauptaufgabe hat die deutsche Bundespräsidentin/der deutsche Bundespräsident?“ ; repräsentiert das Land. Das bedeutet, dass die Hauptaufgabe dieses Amtes darin besteht, Deutschland als Staatsoberhaupt zu vertreten, nicht das Land politisch zu regieren.",
+
+"Aufgabe 85: „Wer bildet den deutschen Bundesrat?“ ; die Regierungsvertreter der Bundesländer. Das bedeutet, dass im Bundesrat Mitglieder der Landesregierungen sitzen. So wirken die Bundesländer an der Bundespolitik mit.",
+
+"Aufgabe 86: „Wer wählt in Deutschland die Bundespräsidentin/den Bundespräsidenten?“ ; die Bundesversammlung. Das bedeutet, dass die Bundespräsidentin oder der Bundespräsident nicht direkt vom Volk gewählt wird, sondern von einem besonderen Gremium, der Bundesversammlung.",
+
+"Aufgabe 87: „Wer ist das Staatsoberhaupt der Bundesrepublik Deutschland?“ ; die Bundespräsidentin/der Bundespräsident. Das bedeutet, dass das Staatsoberhaupt in Deutschland nicht die Bundeskanzlerin oder der Bundeskanzler ist, sondern die Bundespräsidentin oder der Bundespräsident.",
+
+"Aufgabe 88: „Die parlamentarische Opposition im Deutschen Bundestag …“ ; kontrolliert die Regierung. Das bedeutet, dass die Opposition die Regierung beobachtet, kritisiert und ihre Entscheidungen prüft. Das ist wichtig für die Demokratie.",
+
+"Aufgabe 89: „Wie nennt man in Deutschland die Vereinigung von Abgeordneten einer Partei im Parlament?“ ; Fraktion. Das bedeutet, dass die Abgeordneten einer Partei im Parlament gemeinsam eine Fraktion bilden und organisiert zusammenarbeiten.",
+
+"Aufgabe 90: „Die deutschen Bundesländer wirken an der Gesetzgebung des Bundes mit durch …“ ; den Bundesrat. Das bedeutet, dass die Bundesländer über den Bundesrat an Gesetzen des Bundes mitwirken. So haben die Länder Einfluss auf die Bundesgesetzgebung.",
+
+"Aufgabe 91: „In Deutschland kann ein Regierungswechsel in einem Bundesland Auswirkungen auf die Bundespolitik haben. Das Regieren wird …“ ; schwieriger, wenn dadurch die Mehrheit im Bundesrat verändert wird. Das bedeutet, dass die Bundesländer über den Bundesrat an der Politik des Bundes mitwirken. Wenn sich dort die Mehrheiten ändern, kann es für die Bundesregierung schwerer werden, ihre Pläne durchzusetzen.",
+
+"Aufgabe 92: „Was bedeutet die Abkürzung CSU in Deutschland?“ ; Christlich Soziale Union. Das ist der vollständige Name der Partei CSU.",
+
+"Aufgabe 93: „Je mehr ‚Zweitstimmen‘ eine Partei bei einer Bundestagswahl bekommt, desto …“ ; mehr Sitze erhält die Partei im Parlament. Das bedeutet, dass die Zweitstimme wichtig für die Verteilung der Sitze im Bundestag ist. Je mehr Zweitstimmen eine Partei bekommt, desto stärker ist sie im Parlament vertreten.",
+
+"Aufgabe 94: „Ab welchem Alter darf man in Deutschland an der Wahl zum Deutschen Bundestag teilnehmen?“ ; 18. Das bedeutet, dass man für die Bundestagswahl volljährig sein muss. Erst ab 18 Jahren darf man dort wählen.",
+
+"Aufgabe 95: „Was gilt für die meisten Kinder in Deutschland?“ ; Schulpflicht. Das bedeutet, dass Kinder in Deutschland zur Schule gehen müssen. Schule ist also für die meisten Kinder nicht freiwillig, sondern Pflicht.",
+
+"Aufgabe 96: „Wie kann jemand, der den Holocaust leugnet, bestraft werden?“ ; mit Freiheitsstrafe bis zu fünf Jahren oder mit Geldstrafe. Das bedeutet, dass Holocaustleugnung in Deutschland nicht erlaubt ist und strafrechtlich verfolgt werden kann.",
+
+"Aufgabe 97: „Was bezahlt man in Deutschland automatisch, wenn man fest angestellt ist?“ ; Sozialversicherung. Das bedeutet, dass bei einer festen Anstellung automatisch Beiträge zur Sozialversicherung gezahlt werden, zum Beispiel für Rente, Krankenversicherung oder Arbeitslosigkeit.",
+
+"Aufgabe 98: „Wenn Abgeordnete im Deutschen Bundestag ihre Fraktion wechseln, …“ ; kann die Regierung ihre Mehrheit verlieren. Das bedeutet, dass sich die politischen Mehrheiten im Bundestag ändern können, wenn Abgeordnete ihre Fraktion wechseln. Dadurch kann eine Regierung schwächer werden oder ihre Mehrheit verlieren.",
+
+"Aufgabe 99: „Wer bezahlt in Deutschland die Sozialversicherungen?“ ; Arbeitgeberinnen/Arbeitgeber und Arbeitnehmerinnen/Arbeitnehmer. Das bedeutet, dass beide Seiten gemeinsam Beiträge zahlen. Die Kosten werden also nicht nur von einer Seite getragen.",
+
+"Aufgabe 100: „Was gehört nicht zur gesetzlichen Sozialversicherung?“ ; die Lebensversicherung. Das bedeutet, dass Rentenversicherung, Arbeitslosenversicherung und Pflegeversicherung zur gesetzlichen Sozialversicherung gehören, eine Lebensversicherung aber nicht.",
+
+"Aufgabe 101: „Gewerkschaften sind Interessenverbände der …“ ; Arbeitnehmerinnen und Arbeitnehmer. Das bedeutet, dass Gewerkschaften die Interessen von Beschäftigten vertreten, zum Beispiel bei Lohn, Arbeitszeit und Arbeitsbedingungen.",
+
+"Aufgabe 102: „Womit kann man in der Bundesrepublik Deutschland geehrt werden, wenn man auf politischem, wirtschaftlichem, kulturellem, geistigem oder sozialem Gebiet eine besondere Leistung erbracht hat?“ ; mit dem Bundesverdienstkreuz. Das bedeutet, dass Menschen für besondere Leistungen für die Gesellschaft mit dieser staatlichen Auszeichnung geehrt werden können.",
+
+"Aufgabe 103: „Was wird in Deutschland als ‚Ampelkoalition‘ bezeichnet?“ ; die Zusammenarbeit von SPD, FDP und Bündnis 90/Die Grünen in einer Regierung. Das bedeutet, dass diese drei Parteien wegen ihrer Farben Rot, Gelb und Grün zusammen „Ampel“ genannt werden.",
+
+"Aufgabe 104: „Eine Frau in Deutschland verliert ihre Arbeit. Was darf nicht der Grund für diese Entlassung sein?“ ; Die Frau bekommt ein Kind und ihr Chef weiß das. Das bedeutet, dass eine Schwangerschaft kein erlaubter Grund für eine Kündigung ist. Solche Entlassungen sind rechtlich besonders geschützt.",
+
+"Aufgabe 105: „Was ist eine Aufgabe von Wahlhelferinnen/Wahlhelfern in Deutschland?“ ; Sie zählen die Stimmen nach dem Ende der Wahl. Das bedeutet, dass Wahlhelferinnen und Wahlhelfer nach Schließung des Wahllokals bei der Auszählung helfen.",
+
+"Aufgabe 106: „In Deutschland helfen ehrenamtliche Wahlhelferinnen und Wahlhelfer bei den Wahlen. Was ist eine Aufgabe von Wahlhelferinnen/Wahlhelfern?“ ; Sie zählen die Stimmen nach dem Ende der Wahl. Das ist dieselbe Grundidee wie in Aufgabe 105: Wahlhelfer helfen nach der Wahl bei der Auszählung der Stimmen.",
+
+"Aufgabe 107: „Für wie viele Jahre wird der Bundestag in Deutschland gewählt?“ ; 4 Jahre. Das bedeutet, dass eine Wahlperiode des Bundestages normalerweise vier Jahre dauert. Danach gibt es wieder eine Bundestagswahl.",
+
+"Aufgabe 108: „Bei einer Bundestagswahl in Deutschland darf jede/jeder wählen, die/der …“ ; Bürgerin/Bürger der Bundesrepublik Deutschland ist und mindestens 18 Jahre alt ist. Das bedeutet, dass für die Bundestagswahl die deutsche Staatsangehörigkeit und das Mindestalter von 18 Jahren nötig sind.",
+
+"Aufgabe 109: „Wie oft gibt es normalerweise Bundestagswahlen in Deutschland?“ ; alle vier Jahre. Das bedeutet, dass die Bundestagswahl regelmäßig im Abstand von vier Jahren stattfindet.",
+
+"Aufgabe 110: „Für wie viele Jahre wird der Bundestag in Deutschland gewählt?“ ; 4 Jahre. Auch hier gilt: Die reguläre Wahlperiode des Bundestages dauert vier Jahre.",
+
+"Aufgabe 111: „Welche Handlungen mit Bezug auf den Staat Israel sind in Deutschland verboten?“ ; der öffentliche Aufruf zur Vernichtung Israels. Das bedeutet, dass öffentliche Gewalt- oder Vernichtungsaufrufe gegen Israel in Deutschland verboten sind. Kritik oder Diskussionen über Politik sind etwas anderes.",
+
+"Aufgabe 112: „Die Wahlen in Deutschland sind …“ ; geheim. Das bedeutet, dass niemand wissen muss, wen man gewählt hat. Die Entscheidung in der Wahlkabine ist privat und geschützt.",
+
+"Aufgabe 113: „Wahlen in Deutschland gewinnt die Partei, die …“ ; die meisten Stimmen bekommt. Das bedeutet, dass die Partei mit den meisten Stimmen die Wahl gewinnt. Nicht bestimmte Gruppen oder nur Erststimmen für eine Kanzlerperson entscheiden allein darüber.",
+
+"Aufgabe 114: „An demokratischen Wahlen in Deutschland teilzunehmen ist …“ ; ein Recht. Das bedeutet, dass man wählen darf, aber nicht wählen muss. Wählen ist also kein Zwang, sondern ein demokratisches Recht.",
+
+"Aufgabe 115: „Was bedeutet ‚aktives Wahlrecht‘ in Deutschland?“ ; Man kann wählen. Das bedeutet, dass aktives Wahlrecht das Recht ist, selbst seine Stimme abzugeben.",
+
+"Aufgabe 116: „Wenn Sie bei einer Bundestagswahl in Deutschland wählen dürfen, heißt das …“ ; aktives Wahlrecht. Das bedeutet, dass man das Recht hat, selbst zu wählen. Genau dieses Recht nennt man aktives Wahlrecht.",
+
+"Aufgabe 117: „Wie viel Prozent der Zweitstimmen müssen Parteien mindestens bekommen, um in den Deutschen Bundestag gewählt zu werden?“ ; 5%. Das bedeutet, dass eine Partei normalerweise mindestens fünf Prozent der Zweitstimmen braucht, um in den Bundestag einzuziehen. Das nennt man auch die Fünf-Prozent-Hürde.",
+
+"Aufgabe 118: „Wer darf bei den rund 40 jüdischen Makkabi-Sportvereinen Mitglied werden?“ ; alle Menschen. Das bedeutet, dass diese Sportvereine offen sind und nicht nur für eine bestimmte Nationalität oder Religion.",
+
+"Aufgabe 119: „Wahlen in Deutschland sind frei. Was bedeutet das?“ ; Jede Person kann ohne Zwang entscheiden, ob sie wählen möchte und wen sie wählen möchte. Das bedeutet, dass niemand zur Wahl oder zu einer bestimmten Wahlentscheidung gezwungen werden darf. Freiheit bei der Wahl heißt freie persönliche Entscheidung.",
+
+"Aufgabe 120: „Das Wahlsystem in Deutschland ist ein …“ ; Mehrheits- und Verhältniswahlrecht. Das bedeutet, dass das deutsche Wahlsystem Elemente von zwei Systemen verbindet: Einerseits gibt es Direktwahl, andererseits eine Sitzverteilung nach Stimmenanteilen.",
+
+"Aufgabe 121: „Eine Partei möchte in den Deutschen Bundestag. Sie muss aber einen Mindestanteil an Wählerstimmen haben. Das heißt …“ ; 5%-Hürde. Das bedeutet, dass eine Partei normalerweise mindestens fünf Prozent der Stimmen braucht, um in den Bundestag einzuziehen.",
+
+"Aufgabe 122: „Welchem Grundsatz unterliegen Wahlen in Deutschland? Wahlen in Deutschland sind …“ ; frei, gleich, geheim. Das bedeutet, dass jede wahlberechtigte Person frei entscheiden darf, dass jede Stimme gleich viel zählt und dass niemand wissen muss, wen man gewählt hat.",
+
+"Aufgabe 123: „Was ist in Deutschland die ‚5%-Hürde‘?“ ; Mindestanteil an Wählerstimmen, um ins Parlament zu kommen. Das bedeutet, dass eine Partei eine bestimmte Mindestzahl an Stimmen braucht, um in den Bundestag einzuziehen.",
+
+"Aufgabe 124: „Die Bundestagswahl in Deutschland ist die Wahl …“ ; des Parlaments für Deutschland. Das bedeutet, dass bei der Bundestagswahl die Abgeordneten des Bundestages gewählt werden, also das Parlament auf Bundesebene.",
+
+"Aufgabe 125: „In einer Demokratie ist eine Funktion von regelmäßigen Wahlen, …“ ; nach dem Willen der Wählermehrheit den Wechsel der Regierung zu ermöglichen. Das bedeutet, dass Wahlen wichtig sind, damit die Menschen durch ihre Stimmen eine neue Regierung möglich machen können.",
+
+"Aufgabe 126: „Was bekommen wahlberechtigte Bürgerinnen und Bürger in Deutschland vor einer Wahl?“ ; eine Wahlbenachrichtigung von der Gemeinde. Das bedeutet, dass die Gemeinde den Wahlberechtigten vor der Wahl eine offizielle Mitteilung schickt.",
+
+"Aufgabe 127: „Warum gibt es die 5%-Hürde im Wahlgesetz der Bundesrepublik Deutschland? Es gibt sie, weil …“ ; viele kleine Parteien die Regierungsbildung erschweren. Das bedeutet, dass zu viele sehr kleine Parteien im Parlament die Bildung einer stabilen Regierung schwieriger machen können.",
+
+"Aufgabe 128: „Parlamentsmitglieder, die von den Bürgerinnen und Bürgern gewählt werden, nennt man …“ ; Abgeordnete. Das bedeutet, dass die gewählten Mitglieder eines Parlaments Abgeordnete heißen.",
+
+"Aufgabe 129: „Vom Volk gewählt wird in Deutschland …“ ; der Bundestag. Das bedeutet, dass die Bürgerinnen und Bürger in Deutschland den Bundestag direkt wählen.",
+
+"Aufgabe 130: „Welcher Stimmzettel wäre bei einer Bundestagswahl gültig?“ ; der Stimmzettel, auf dem die Stimme klar und richtig abgegeben wurde. Das bedeutet, dass ein Stimmzettel nur dann gültig ist, wenn eindeutig zu erkennen ist, wie gewählt wurde, und die Regeln eingehalten wurden.",
+
+"Aufgabe 131: „In Deutschland ist eine Bürgermeisterin/ein Bürgermeister …“ ; das Oberhaupt einer Gemeinde. Das bedeutet, dass die Bürgermeisterin oder der Bürgermeister die politische Spitze einer Stadt oder Gemeinde ist.",
+
+"Aufgabe 132: „Viele Menschen in Deutschland arbeiten in ihrer Freizeit ehrenamtlich. Was bedeutet das?“ ; Sie arbeiten freiwillig und unbezahlt in Vereinen und Verbänden. Das bedeutet, dass ehrenamtliche Arbeit freiwillig gemacht wird und man dafür in der Regel kein Geld bekommt.",
+
+"Aufgabe 133: „Was ist bei Bundestags- und Landtagswahlen in Deutschland erlaubt?“ ; Man kann durch Briefwahl seine Stimme abgeben. Das bedeutet, dass man in Deutschland nicht nur im Wahllokal wählen darf, sondern auch per Briefwahl.",
+
+"Aufgabe 134: „Man will die Buslinie abschaffen, mit der Sie immer zur Arbeit fahren. Was können Sie machen, um die Buslinie zu erhalten?“ ; Ich beteilige mich an einer Bürgerinitiative für die Erhaltung der Buslinie oder gründe selber eine Initiative. Das bedeutet, dass man sich demokratisch engagieren und gemeinsam mit anderen für ein lokales Anliegen einsetzen kann.",
+
+"Aufgabe 135: „Wen vertreten die Gewerkschaften in Deutschland?“ ; Arbeitnehmerinnen und Arbeitnehmer. Das bedeutet, dass Gewerkschaften die Interessen von Beschäftigten vertreten, zum Beispiel bei Lohn und Arbeitsbedingungen.",
+
+"Aufgabe 136: „Sie gehen in Deutschland zum Arbeitsgericht bei …“ ; ungerechtfertigter Kündigung durch Ihre Chefin/Ihren Chef. Das bedeutet, dass das Arbeitsgericht zuständig ist, wenn es Streit im Arbeitsverhältnis gibt.",
+
+"Aufgabe 137: „Welches Gericht ist in Deutschland bei Konflikten in der Arbeitswelt zuständig?“ ; das Arbeitsgericht. Das bedeutet, dass Streit zwischen Arbeitnehmern und Arbeitgebern vor dem Arbeitsgericht behandelt wird.",
+
+"Aufgabe 138: „Was kann ich in Deutschland machen, wenn mir meine Arbeitgeberin/mein Arbeitgeber zu Unrecht gekündigt hat?“ ; Kündigungsschutzklage erheben. Das bedeutet, dass man sich juristisch gegen eine ungerechtfertigte Kündigung wehren kann.",
+
+"Aufgabe 139: „Wann kommt es in Deutschland zu einem Prozess vor Gericht? Wenn jemand …“ ; eine Straftat begangen hat und angeklagt wird. Das bedeutet, dass es zu einem Gerichtsprozess kommt, wenn jemand einer Straftat beschuldigt und offiziell angeklagt wird.",
+
+"Aufgabe 140: „Was macht eine Schöffin/ein Schöffe in Deutschland? Sie/Er …“ ; entscheidet mit Richterinnen/Richtern über Schuld und Strafe. Das bedeutet, dass Schöffinnen und Schöffen als ehrenamtliche Richter gemeinsam mit Berufsrichtern an Entscheidungen im Gericht mitwirken.",
+
+"Aufgabe 141: „Wer berät in Deutschland Personen bei Rechtsfragen und vertritt sie vor Gericht?“ ; eine Rechtsanwältin/ein Rechtsanwalt. Das bedeutet, dass Anwältinnen und Anwälte Menschen rechtlich beraten und sie vor Gericht vertreten.",
+
+"Aufgabe 142: „Was ist die Hauptaufgabe einer Richterin/eines Richters in Deutschland? Eine Richterin/ein Richter …“ ; arbeitet an einem Gericht und spricht Urteile. Das bedeutet, dass Richterinnen und Richter Fälle prüfen und rechtliche Entscheidungen treffen.",
+
+"Aufgabe 143: „Eine Richterin/ein Richter in Deutschland gehört zur …“ ; Judikative. Das bedeutet, dass Richterinnen und Richter zur rechtsprechenden Gewalt gehören.",
+
+"Aufgabe 144: „Eine Richterin/ein Richter gehört in Deutschland zur …“ ; rechtsprechenden Gewalt. Das bedeutet, dass Richterinnen und Richter Recht sprechen und deshalb zur Judikative gehören.",
+
+"Aufgabe 145: „In Deutschland wird die Staatsgewalt geteilt. Für welche Staatsgewalt arbeitet eine Richterin/ein Richter? Für die …“ ; Judikative. Das bedeutet, dass Richterinnen und Richter zur Gewalt gehören, die Gerichtsentscheidungen trifft.",
+
+"Aufgabe 146: „Wie nennt man in Deutschland ein Verfahren vor einem Gericht?“ ; Prozess. Das bedeutet, dass ein Fall vor Gericht in Deutschland Prozess genannt wird.",
+
+"Aufgabe 147: „Was ist die Arbeit einer Richterin/eines Richters in Deutschland?“ ; Recht sprechen. Das bedeutet, dass Richterinnen und Richter Gesetze auf konkrete Fälle anwenden und darüber urteilen.",
+
+"Aufgabe 148: „Was ist eine Aufgabe der Polizei in Deutschland?“ ; die Einhaltung von Gesetzen zu überwachen. Das bedeutet, dass die Polizei darauf achtet, dass Gesetze beachtet werden, und bei Verstößen eingreift.",
+
+"Aufgabe 149: „Was ist ein Beispiel für antisemitisches Verhalten?“ ; den Holocaust leugnen. Das bedeutet, dass das Leugnen des Holocaust antisemitisch ist und in Deutschland als schweres Fehlverhalten gilt.",
+
+"Aufgabe 150: „Eine Gerichtsschöffin/ein Gerichtsschöffe in Deutschland ist …“ ; eine ehrenamtliche Richterin/ein ehrenamtlicher Richter. Das bedeutet, dass Schöffinnen und Schöffen keine Berufsrichter sind, aber freiwillig und ehrenamtlich an Gerichtsentscheidungen mitwirken.",
+
+"Aufgabe 151: „Wer baute die Mauer in Berlin?“ ; die DDR. Das bedeutet, dass die Regierung der DDR die Berliner Mauer bauen ließ. Die Mauer trennte Ost-Berlin und West-Berlin und sollte verhindern, dass Menschen aus der DDR in den Westen fliehen.",
+
+"Aufgabe 152: „Wann waren die Nationalsozialisten mit Adolf Hitler in Deutschland an der Macht?“ ; 1933 bis 1945. Das bedeutet, dass Adolf Hitler und die Nationalsozialisten in dieser Zeit Deutschland als Diktatur regierten.",
+
+"Aufgabe 153: „Was war am 8. Mai 1945?“ ; Ende des Zweiten Weltkriegs in Europa. Das bedeutet, dass Deutschland an diesem Tag kapitulierte und der Krieg in Europa offiziell zu Ende ging.",
+
+"Aufgabe 154: „Wann war der Zweite Weltkrieg zu Ende?“ ; 1945. Das bedeutet, dass der Zweite Weltkrieg in Europa im Jahr 1945 endete.",
+
+"Aufgabe 155: „Wann waren die Nationalsozialisten in Deutschland an der Macht?“ ; 1933 bis 1945. Das bedeutet, dass die Nationalsozialisten zwölf Jahre lang in Deutschland regierten und eine Diktatur errichteten.",
+
+"Aufgabe 156: „In welchem Jahr wurde Hitler Reichskanzler?“ ; 1933. Das bedeutet, dass Adolf Hitler im Jahr 1933 Regierungschef in Deutschland wurde.",
+
+"Aufgabe 157: „Die Nationalsozialisten mit Adolf Hitler errichteten 1933 in Deutschland …“ ; eine Diktatur. Das bedeutet, dass es keine echte Demokratie mehr gab. Die Nationalsozialisten kontrollierten den Staat, verfolgten Gegner und nahmen den Menschen viele Rechte.",
+
+"Aufgabe 158: „Das ‚Dritte Reich‘ war eine …“ ; Diktatur. Das bedeutet, dass Deutschland in dieser Zeit nicht demokratisch war. Die Macht lag bei Adolf Hitler und den Nationalsozialisten.",
+
+"Aufgabe 159: „Was gab es in Deutschland nicht während der Zeit des Nationalsozialismus?“ ; freie Wahlen. Das bedeutet, dass die Menschen damals nicht frei und demokratisch wählen konnten. Es gab Kontrolle, Angst, Verfolgung und keine echte politische Freiheit.",
+
+"Aufgabe 160: „Welcher Krieg dauerte von 1939 bis 1945?“ ; der Zweite Weltkrieg. Das bedeutet, dass der Zweite Weltkrieg im Jahr 1939 begann und im Jahr 1945 endete.",
+
+"Aufgabe 161: „Was kennzeichnete den NS-Staat? Eine Politik …“ ; des staatlichen Rassismus. Das bedeutet, dass der Staat Menschen nach rassistischen Ideen unterschiedlich behandelte und verfolgte. Besonders Jüdinnen und Juden wurden vom NS-Staat verfolgt und ermordet.",
+
+"Aufgabe 162: „Claus Schenk Graf von Stauffenberg wurde bekannt durch …“ ; das Attentat auf Hitler am 20. Juli 1944. Das bedeutet, dass Stauffenberg versuchte, Adolf Hitler zu töten und die Diktatur zu beenden.",
+
+"Aufgabe 163: „In welchem Jahr zerstörten die Nationalsozialisten Synagogen und jüdische Geschäfte in Deutschland?“ ; 1938. Das bedeutet, dass im November 1938 jüdische Synagogen, Geschäfte und Einrichtungen von Nationalsozialisten und ihren Anhängern zerstört wurden.",
+
+"Aufgabe 164: „Was passierte am 9. November 1938 in Deutschland?“ ; Jüdische Geschäfte und Synagogen werden durch Nationalsozialisten und ihre Anhänger zerstört. Das bedeutet, dass es an diesem Tag schwere Gewalt gegen jüdische Menschen und jüdische Einrichtungen gab.",
+
+"Aufgabe 165: „Wie hieß der erste Bundeskanzler der Bundesrepublik Deutschland?“ ; Konrad Adenauer. Das bedeutet, dass Konrad Adenauer nach der Gründung der Bundesrepublik Deutschland der erste Regierungschef war.",
+
+"Aufgabe 166: „Bei welchen Demonstrationen in Deutschland riefen die Menschen ‚Wir sind das Volk‘?“ ; bei den Montagsdemonstrationen 1989 in der DDR. Das bedeutet, dass viele Menschen in der DDR friedlich gegen die Diktatur demonstrierten und mehr Freiheit wollten.",
+
+"Aufgabe 167: „Welche Länder wurden nach dem Zweiten Weltkrieg in Deutschland als ‚Alliierte Besatzungsmächte‘ bezeichnet?“ ; USA, Sowjetunion, Großbritannien, Frankreich. Das bedeutet, dass diese vier Länder Deutschland nach dem Zweiten Weltkrieg besetzten und in Besatzungszonen aufteilten.",
+
+"Aufgabe 168: „Welches Land war keine ‚Alliierte Besatzungsmacht‘ in Deutschland?“ ; Japan. Das bedeutet, dass Japan nach dem Zweiten Weltkrieg keine Besatzungsmacht in Deutschland war. Die Besatzungsmächte waren USA, Sowjetunion, Großbritannien und Frankreich.",
+
+"Aufgabe 169: „Wann wurde die Bundesrepublik Deutschland gegründet?“ ; 1949. Das bedeutet, dass die Bundesrepublik Deutschland im Jahr 1949 entstand.",
+
+"Aufgabe 170: „Was gab es während der Zeit des Nationalsozialismus in Deutschland?“ ; das Verbot von Parteien. Das bedeutet, dass politische Freiheit stark eingeschränkt wurde. Andere Parteien wurden verboten, und die Nationalsozialisten kontrollierten den Staat.",
+
+"Aufgabe 171: „Soziale Marktwirtschaft bedeutet, die Wirtschaft …“ ; richtet sich nach Angebot und Nachfrage, aber der Staat sorgt für einen sozialen Ausgleich. Das bedeutet, dass Unternehmen und Menschen wirtschaftlich frei handeln können, aber der Staat auch hilft, damit soziale Sicherheit möglich ist.",
+
+"Aufgabe 172: „In welcher Besatzungszone wurde die DDR gegründet?“ ; in der sowjetischen Besatzungszone. Das bedeutet, dass die DDR im Gebiet entstand, das nach dem Zweiten Weltkrieg von der Sowjetunion kontrolliert wurde.",
+
+"Aufgabe 173: „Die Bundesrepublik Deutschland ist ein Gründungsmitglied …“ ; der Europäischen Union (EU). Das bedeutet, dass Deutschland zu den Staaten gehört, die am Anfang der europäischen Einigung beteiligt waren.",
+
+"Aufgabe 174: „Wann wurde die DDR gegründet?“ ; 1949. Das bedeutet, dass die DDR im selben Jahr wie die Bundesrepublik Deutschland gegründet wurde, aber in Ostdeutschland.",
+
+"Aufgabe 175: „Wie viele Besatzungszonen gab es in Deutschland nach dem Zweiten Weltkrieg?“ ; 4. Das bedeutet, dass Deutschland nach 1945 in vier Besatzungszonen aufgeteilt wurde.",
+
+"Aufgabe 176: „Wie waren die Besatzungszonen Deutschlands nach 1945 verteilt?“ ; 1=Großbritannien, 2=Sowjetunion, 3=USA, 4=Frankreich. Das bedeutet, dass Deutschland nach dem Zweiten Weltkrieg in vier Zonen aufgeteilt wurde, die von Großbritannien, der Sowjetunion, den USA und Frankreich kontrolliert wurden.",
+
+"Aufgabe 177: „Welche deutsche Stadt wurde nach dem Zweiten Weltkrieg in vier Sektoren aufgeteilt?“ ; Berlin. Das bedeutet, dass Berlin nach dem Krieg in vier Bereiche geteilt wurde, die von den vier Besatzungsmächten kontrolliert wurden.",
+
+"Aufgabe 178: „Vom Juni 1948 bis zum Mai 1949 wurden die Bürgerinnen und Bürger von West-Berlin durch eine Luftbrücke versorgt. Welcher Umstand war dafür verantwortlich?“ ; Die Sowjetunion unterbrach den gesamten Verkehr auf dem Landwege. Das bedeutet, dass West-Berlin nicht mehr über Straßen und Schienen versorgt werden konnte. Deshalb brachten Flugzeuge Lebensmittel und wichtige Waren in die Stadt.",
+
+"Aufgabe 179: „Wie endete der Zweite Weltkrieg in Europa offiziell?“ ; durch die bedingungslose Kapitulation Deutschlands. Das bedeutet, dass Deutschland ohne Bedingungen aufgab. Damit war der Krieg in Europa offiziell beendet.",
+
+"Aufgabe 180: „Der erste Bundeskanzler der Bundesrepublik Deutschland war …“ ; Konrad Adenauer. Das bedeutet, dass Konrad Adenauer der erste Regierungschef der Bundesrepublik Deutschland war.",
+
+"Aufgabe 181: „Was wollte Willy Brandt mit seinem Kniefall 1970 im ehemaligen jüdischen Ghetto in Warschau ausdrücken?“ ; Er bat Polen und die polnischen Juden um Vergebung. Das bedeutet, dass Willy Brandt mit dieser Geste Trauer, Schuld und Respekt zeigen wollte. Er bat damit symbolisch um Vergebung für die Verbrechen Deutschlands im Nationalsozialismus.",
+
+"Aufgabe 182: „Wie heißt das jüdische Gebetshaus?“ ; Synagoge. Das bedeutet, dass Jüdinnen und Juden in einer Synagoge beten und religiöse Feiern haben. Eine Kirche gehört zum Christentum, eine Moschee zum Islam.",
+
+"Aufgabe 183: „Wann war in der Bundesrepublik Deutschland das ‚Wirtschaftswunder‘?“ ; 50er Jahre. Das bedeutet, dass die Wirtschaft in Westdeutschland nach dem Zweiten Weltkrieg besonders in den 1950er-Jahren stark wuchs. Viele Menschen fanden Arbeit, und das Land wurde wieder aufgebaut.",
+
+"Aufgabe 184: „Auf welcher rechtlichen Grundlage wurde der Staat Israel gegründet?“ ; eine Resolution der Vereinten Nationen. Das bedeutet, dass die Gründung Israels auf einem Beschluss der UNO beruhte. Die Vereinten Nationen hatten einen Teilungsplan für das Gebiet beschlossen.",
+
+"Aufgabe 185: „Wofür stand der Ausdruck ‚Eiserner Vorhang‘? Für die Abschottung …“ ; des Warschauer Pakts gegen den Westen. Das bedeutet, dass Europa im Kalten Krieg politisch geteilt war. Der Osten war stark vom Westen getrennt, besonders durch Grenzen, Kontrolle und fehlende Reisefreiheit.",
+
+"Aufgabe 186: „Im Jahr 1953 gab es in der DDR einen Aufstand, an den lange Zeit in der Bundesrepublik Deutschland ein Feiertag erinnerte. Wann war das?“ ; 17. Juni. Das bedeutet, dass am 17. Juni 1953 viele Menschen in der DDR gegen die Regierung protestierten. Dieser Aufstand wurde niedergeschlagen.",
+
+"Aufgabe 187: „Welcher deutsche Staat hatte eine schwarz-rot-goldene Flagge mit Hammer, Zirkel und Ährenkranz?“ ; DDR. Das bedeutet, dass die DDR eine Flagge in den deutschen Farben hatte, aber zusätzlich Symbole wie Hammer, Zirkel und Ährenkranz zeigte.",
+
+"Aufgabe 188: „In welchem Jahr wurde die Mauer in Berlin gebaut?“ ; 1961. Das bedeutet, dass die Berliner Mauer im Jahr 1961 gebaut wurde. Sie trennte viele Jahre lang Ost-Berlin und West-Berlin.",
+
+"Aufgabe 189: „Wann baute die DDR die Mauer in Berlin?“ ; 1961. Das bedeutet, dass die Regierung der DDR im Jahr 1961 die Berliner Mauer bauen ließ, damit Menschen nicht mehr so leicht in den Westen fliehen konnten.",
+
+"Aufgabe 190: „Was bedeutet die Abkürzung DDR?“ ; Deutsche Demokratische Republik. Das war der offizielle Name des ostdeutschen Staates, der von 1949 bis 1990 existierte.",
+
+"Aufgabe 191: „Wann wurde die Mauer in Berlin für alle geöffnet?“ ; 1989. Das bedeutet, dass die Berliner Mauer im Jahr 1989 geöffnet wurde. Viele Menschen konnten danach wieder frei zwischen Ost- und West-Berlin gehen.",
+
+"Aufgabe 192: „Welches heutige deutsche Bundesland gehörte früher zum Gebiet der DDR?“ ; Brandenburg. Das bedeutet, dass Brandenburg früher Teil der DDR war und heute ein deutsches Bundesland ist.",
+
+"Aufgabe 193: „Von 1961 bis 1989 war Berlin …“ ; durch eine Mauer geteilt. Das bedeutet, dass Berlin in dieser Zeit in Ost-Berlin und West-Berlin getrennt war. Die Berliner Mauer war das sichtbare Zeichen dieser Teilung.",
+
+"Aufgabe 194: „Am 3. Oktober feiert man in Deutschland den Tag der Deutschen …“ ; Einheit. Das bedeutet, dass Deutschland am 3. Oktober den Tag der Deutschen Einheit feiert. Dieser Feiertag erinnert an die Wiedervereinigung Deutschlands.",
+
+"Aufgabe 195: „Welches heutige deutsche Bundesland gehörte früher zum Gebiet der DDR?“ ; Sachsen-Anhalt. Das bedeutet, dass Sachsen-Anhalt früher zur DDR gehörte und heute ein Bundesland der Bundesrepublik Deutschland ist.",
+
+"Aufgabe 196: „Warum nennt man die Zeit im Herbst 1989 in der DDR ‚Die Wende‘? In dieser Zeit veränderte sich die DDR politisch …“ ; von einer Diktatur zur Demokratie. Das bedeutet, dass sich im Herbst 1989 das politische System in der DDR stark veränderte. Viele Menschen demonstrierten für Freiheit und Demokratie.",
+
+"Aufgabe 197: „Welches heutige deutsche Bundesland gehörte früher zum Gebiet der DDR?“ ; Thüringen. Das bedeutet, dass Thüringen früher Teil der DDR war und heute ein Bundesland in Deutschland ist.",
+
+"Aufgabe 198: „Welches heutige deutsche Bundesland gehörte früher zum Gebiet der DDR?“ ; Sachsen. Das bedeutet, dass Sachsen früher zur DDR gehörte und heute eines der Bundesländer Deutschlands ist.",
+
+"Aufgabe 199: „Mit der Abkürzung ‚Stasi‘ meinte man in der DDR …“ ; das Ministerium für Staatssicherheit. Das bedeutet, dass die Stasi der Überwachungs- und Geheimdienst der DDR war. Sie kontrollierte viele Menschen und sammelte Informationen über sie.",
+
+"Aufgabe 200: „Welches heutige deutsche Bundesland gehörte früher zum Gebiet der DDR?“ ; Mecklenburg-Vorpommern. Das bedeutet, dass Mecklenburg-Vorpommern früher zur DDR gehörte und heute ein Bundesland der Bundesrepublik Deutschland ist.",
+
+"Aufgabe 201: „Welche der folgenden Auflistungen enthält nur Bundesländer, die zum Gebiet der früheren DDR gehörten?“ ; Mecklenburg-Vorpommern, Brandenburg, Sachsen, Sachsen-Anhalt, Thüringen. Das bedeutet, dass diese fünf heutigen Bundesländer auf dem Gebiet der früheren DDR lagen.",
+
+"Aufgabe 202: „Zu wem gehörte die DDR im ‚Kalten Krieg‘?“ ; zum Warschauer Pakt. Das bedeutet, dass die DDR im Kalten Krieg zum östlichen Militärbündnis unter Führung der Sowjetunion gehörte.",
+
+"Aufgabe 203: „Wie hieß das Wirtschaftssystem der DDR?“ ; Planwirtschaft. Das bedeutet, dass die Wirtschaft in der DDR stark vom Staat geplant und gesteuert wurde. Der Staat entschied viel darüber, was produziert wurde.",
+
+"Aufgabe 204: „Wie wurden die Bundesrepublik Deutschland und die DDR zu einem Staat?“ ; Die heutigen fünf östlichen Bundesländer sind der Bundesrepublik Deutschland beigetreten. Das bedeutet, dass die DDR nicht die Bundesrepublik besetzt hat. Stattdessen traten die neuen Bundesländer der Bundesrepublik Deutschland bei.",
+
+"Aufgabe 205: „Mit dem Beitritt der DDR zur Bundesrepublik Deutschland gehören die neuen Bundesländer nun auch …“ ; zur Europäischen Union. Das bedeutet, dass die neuen Bundesländer durch die deutsche Einheit auch Teil der Europäischen Union wurden.",
+
+"Aufgabe 206: „Woran erinnern die sogenannten ‚Stolpersteine‘ in Deutschland?“ ; an die Opfer des Nationalsozialismus. Das bedeutet, dass Stolpersteine kleine Gedenksteine im Boden sind. Sie erinnern an Menschen, die von den Nationalsozialisten verfolgt, deportiert oder ermordet wurden.",
+
+"Aufgabe 207: „In welchem Militärbündnis war die DDR Mitglied?“ ; im Warschauer Pakt. Das bedeutet, dass die DDR zum östlichen Militärbündnis gehörte, nicht zur NATO.",
+
+"Aufgabe 208: „Was war die ‚Stasi‘?“ ; der Geheimdienst der DDR. Das bedeutet, dass die Stasi Menschen überwachte, Informationen sammelte und politische Gegner kontrollierte.",
+
+"Aufgabe 209: „Welches war das Wappen der Deutschen Demokratischen Republik?“ ; das Bild mit Hammer, Zirkel und Ährenkranz. Das bedeutet, dass das Wappen der DDR diese Symbole zeigte. Sie standen für Arbeiter, Intelligenz und Bauern.",
+
+"Aufgabe 210: „Was ereignete sich am 17. Juni 1953 in der DDR?“ ; landesweite Streiks und ein Volksaufstand. Das bedeutet, dass viele Menschen in der DDR gegen die Regierung protestierten. Der Aufstand wurde mit Gewalt beendet.",
+
+"Aufgabe 211: „Welcher Politiker steht für die ‚Ostverträge‘?“ ; Willy Brandt. Das bedeutet, dass Willy Brandt für eine neue Politik gegenüber Osteuropa und der DDR stand. Diese Politik sollte Beziehungen verbessern und Spannungen abbauen.",
+
+"Aufgabe 212: „Wie heißt Deutschland mit vollem Namen?“ ; Bundesrepublik Deutschland. Das ist der offizielle vollständige Name von Deutschland.",
+
+"Aufgabe 213: „Wie viele Einwohner hat Deutschland?“ ; 84 Millionen. Das bedeutet, dass in Deutschland ungefähr 84 Millionen Menschen leben.",
+
+"Aufgabe 214: „Welche Farben hat die deutsche Flagge?“ ; schwarz-rot-gold. Das sind die drei Farben der deutschen Flagge.",
+
+"Aufgabe 215: „Wer wird als ‚Kanzler der Deutschen Einheit‘ bezeichnet?“ ; Helmut Kohl. Das bedeutet, dass Helmut Kohl zur Zeit der deutschen Wiedervereinigung Bundeskanzler war und deshalb oft so genannt wird.",
+
+"Aufgabe 216: „Welches Symbol ist im Plenarsaal des Deutschen Bundestages zu sehen?“ ; der Bundesadler. Das bedeutet, dass im Plenarsaal des Bundestages ein großer Adler zu sehen ist. Der Bundesadler ist ein wichtiges Symbol der Bundesrepublik Deutschland.",
+
+"Aufgabe 217: „In welchem Zeitraum gab es die Deutsche Demokratische Republik (DDR)?“ ; 1949 bis 1990. Das bedeutet, dass die DDR im Jahr 1949 gegründet wurde und bis zur deutschen Wiedervereinigung im Jahr 1990 existierte.",
+
+"Aufgabe 218: „Wie viele Bundesländer kamen bei der Wiedervereinigung 1990 zur Bundesrepublik Deutschland hinzu?“ ; 5. Das bedeutet, dass bei der Wiedervereinigung fünf neue Bundesländer zur Bundesrepublik Deutschland kamen.",
+
+"Aufgabe 219: „Die Bundesrepublik Deutschland hat die Grenzen von heute seit …“ ; 1990. Das bedeutet, dass Deutschland seine heutigen Grenzen seit der Wiedervereinigung im Jahr 1990 hat.",
+
+"Aufgabe 220: „Der 27. Januar ist in Deutschland ein offizieller Gedenktag. Woran erinnert dieser Tag?“ ; an die Opfer des Nationalsozialismus (Tag der Befreiung des Vernichtungslagers Auschwitz). Das bedeutet, dass Deutschland an diesem Tag an die Menschen erinnert, die vom Nationalsozialismus verfolgt und ermordet wurden.",
+
+"Aufgabe 221: „Deutschland ist Mitglied des Schengener Abkommens. Was bedeutet das?“ ; Deutsche können in viele Länder Europas ohne Passkontrolle reisen. Das bedeutet, dass man innerhalb vieler europäischer Länder normalerweise ohne Grenzkontrolle reisen kann.",
+
+"Aufgabe 222: „Welches Land ist ein Nachbarland von Deutschland?“ ; Schweiz. Das bedeutet, dass die Schweiz direkt an Deutschland grenzt.",
+
+"Aufgabe 223: „Welches Land ist ein Nachbarland von Deutschland?“ ; Polen. Das bedeutet, dass Polen direkt östlich an Deutschland grenzt.",
+
+"Aufgabe 224: „Was bedeutet die Abkürzung EU?“ ; Europäische Union. Das ist ein Zusammenschluss vieler europäischer Staaten.",
+
+"Aufgabe 225: „In welchem anderen Land gibt es eine große deutschsprachige Bevölkerung?“ ; Österreich. Das bedeutet, dass in Österreich sehr viele Menschen Deutsch sprechen.",
+
+"Aufgabe 226: „Welche ist die Flagge der Europäischen Union?“ ; die blaue Flagge mit gelben Sternen. Das bedeutet, dass die EU-Flagge einen blauen Hintergrund und einen Kreis aus gelben Sternen hat.",
+
+"Aufgabe 227: „Welches Land ist ein Nachbarland von Deutschland?“ ; Dänemark. Das bedeutet, dass Dänemark im Norden direkt an Deutschland grenzt.",
+
+"Aufgabe 228: „Wie wird der Beitritt der DDR zur Bundesrepublik Deutschland im Jahr 1990 allgemein genannt?“ ; Deutsche Wiedervereinigung. Das bedeutet, dass Ostdeutschland und Westdeutschland wieder zu einem gemeinsamen deutschen Staat wurden.",
+
+"Aufgabe 229: „Welches Land ist ein Nachbarland von Deutschland?“ ; Luxemburg. Das bedeutet, dass Luxemburg direkt an Deutschland grenzt.",
+
+"Aufgabe 230: „Das Europäische Parlament wird regelmäßig gewählt, nämlich alle …“ ; 5 Jahre. Das bedeutet, dass die Bürgerinnen und Bürger der EU alle fünf Jahre das Europäische Parlament wählen.",
+
+"Aufgabe 231: „Was bedeutet der Begriff ‚europäische Integration‘?“ ; Der Begriff meint den Zusammenschluss europäischer Staaten zur EU. Das bedeutet, dass europäische Länder enger zusammenarbeiten und gemeinsame Regeln und Institutionen bilden.",
+
+"Aufgabe 232: „Wer wird bei der Europawahl gewählt?“ ; die Abgeordneten des Europäischen Parlaments. Das bedeutet, dass die Menschen bei der Europawahl ihre Vertreterinnen und Vertreter im Europäischen Parlament wählen.",
+
+"Aufgabe 233: „Welches Land ist ein Nachbarland von Deutschland?“ ; Tschechien. Das bedeutet, dass Tschechien direkt an Deutschland grenzt.",
+
+"Aufgabe 234: „Wo ist ein Sitz des Europäischen Parlaments?“ ; Straßburg. Das bedeutet, dass das Europäische Parlament unter anderem in Straßburg arbeitet.",
+
+"Aufgabe 235: „Der damalige französische Staatspräsident François Mitterrand und der damalige deutsche Bundeskanzler Helmut Kohl gedenken in Verdun gemeinsam der Toten beider Weltkriege. Welches Ziel der Europäischen Union wird bei diesem Treffen deutlich?“ ; Frieden und Sicherheit in den Ländern der EU. Das bedeutet, dass frühere Feinde heute zusammenarbeiten sollen. Die EU soll helfen, Frieden in Europa zu sichern.",
+
+"Aufgabe 236: „Wie viele Mitgliedstaaten hat die EU heute?“ ; 27. Das bedeutet, dass die Europäische Union heute aus 27 Staaten besteht.",
+
+"Aufgabe 237: „2007 wurde das 50-jährige Jubiläum der ‚Römischen Verträge‘ gefeiert. Was war der Inhalt der Verträge?“ ; Gründung der Europäischen Wirtschaftsgemeinschaft (EWG). Das bedeutet, dass die Römischen Verträge ein wichtiger Schritt zur späteren Europäischen Union waren.",
+
+"Aufgabe 238: „An welchen Orten arbeitet das Europäische Parlament?“ ; Straßburg, Luxemburg und Brüssel. Das bedeutet, dass das Europäische Parlament nicht nur an einem Ort arbeitet, sondern an mehreren europäischen Standorten.",
+
+"Aufgabe 239: „Durch welche Verträge schloss sich die Bundesrepublik Deutschland mit anderen Staaten zur Europäischen Wirtschaftsgemeinschaft zusammen?“ ; durch die „Römischen Verträge“. Das bedeutet, dass diese Verträge die Grundlage für die Europäische Wirtschaftsgemeinschaft waren.",
+
+"Aufgabe 240: „Seit wann bezahlt man in Deutschland mit dem Euro in bar?“ ; 2002. Das bedeutet, dass Euro-Münzen und Euro-Scheine in Deutschland seit dem Jahr 2002 im Alltag benutzt werden.",
+
+"Aufgabe 241: „Frau Seger bekommt ein Kind. Was muss sie tun, um Elterngeld zu erhalten?“ ; Sie muss einen Antrag bei der Elterngeldstelle stellen. Das bedeutet, dass Elterngeld nicht automatisch kommt. Man muss es offiziell beantragen.",
+
+"Aufgabe 242: „Wer entscheidet, ob ein Kind in Deutschland in den Kindergarten geht?“ ; die Eltern/die Erziehungsberechtigten. Das bedeutet, dass die Eltern oder Erziehungsberechtigten entscheiden, ob ihr Kind in den Kindergarten geht.",
+
+"Aufgabe 243: „Maik und Sybille wollen mit Freunden an ihrem deutschen Wohnort eine Demonstration auf der Straße abhalten. Was müssen sie vorher tun?“ ; Sie müssen die Demonstration anmelden. Das bedeutet, dass Demonstrationen in Deutschland erlaubt sind, aber vorher bei der zuständigen Stelle angemeldet werden müssen.",
+
+"Aufgabe 244: „Welchen Schulabschluss braucht man normalerweise, um an einer Universität in Deutschland ein Studium zu beginnen?“ ; das Abitur. Das bedeutet, dass man normalerweise das Abitur braucht, um an einer Universität studieren zu können.",
+
+"Aufgabe 245: „Wer darf in Deutschland nicht als Paar zusammenleben?“ ; Anne (13 Jahre) und Tim (25 Jahre). Das bedeutet, dass ein Kind und ein erwachsener Mensch nicht als Paar zusammenleben dürfen. Kinder stehen unter besonderem Schutz.",
+
+"Aufgabe 246: „Ab welchem Alter ist man in Deutschland volljährig?“ ; 18. Das bedeutet, dass man in Deutschland ab 18 Jahren rechtlich erwachsen ist.",
+
+"Aufgabe 247: „Eine Frau ist schwanger. Sie ist kurz vor und nach der Geburt ihres Kindes vom Gesetz besonders beschützt. Wie heißt dieser Schutz?“ ; Mutterschutz. Das bedeutet, dass eine schwangere Frau kurz vor und nach der Geburt besondere Rechte hat. Sie soll in dieser Zeit geschützt werden, damit ihre Gesundheit und die Gesundheit des Kindes nicht gefährdet werden.",
+
+"Aufgabe 248: „Die Erziehung der Kinder ist in Deutschland vor allem Aufgabe …“ ; der Eltern. Das bedeutet, dass Eltern hauptsächlich dafür verantwortlich sind, ihre Kinder zu erziehen. Der Staat und die Schule helfen dabei, aber die wichtigste Verantwortung liegt bei den Eltern.",
+
+"Aufgabe 249: „Wer ist in Deutschland hauptsächlich verantwortlich für die Kindererziehung?“ ; die Eltern. Das bedeutet, dass Eltern die Hauptverantwortung für ihre Kinder haben. Sie sollen sich um die Entwicklung, Erziehung und das Wohl ihrer Kinder kümmern.",
+
+"Aufgabe 250: „In Deutschland hat man die besten Chancen auf einen gut bezahlten Arbeitsplatz, wenn man …“ ; gut ausgebildet ist. Das bedeutet, dass Bildung und Ausbildung in Deutschland sehr wichtig für gute Arbeitschancen sind. Wer eine gute Ausbildung oder ein Studium hat, hat oft bessere Möglichkeiten auf dem Arbeitsmarkt.",
+
+"Aufgabe 251: „Wenn man in Deutschland ein Kind schlägt, …“ ; kann man dafür bestraft werden. Das bedeutet, dass Gewalt gegen Kinder in Deutschland verboten ist. Kinder haben ein Recht auf Schutz und gewaltfreie Erziehung.",
+
+"Aufgabe 252: „In Deutschland …“ ; darf man zur gleichen Zeit nur mit einer Partnerin/einem Partner verheiratet sein. Das bedeutet, dass eine Person in Deutschland nicht gleichzeitig mit mehreren Menschen verheiratet sein darf.",
+
+"Aufgabe 253: „Wo müssen Sie sich anmelden, wenn Sie in Deutschland umziehen?“ ; beim Einwohnermeldeamt. Das bedeutet, dass man nach einem Umzug seine neue Adresse offiziell melden muss. Dafür geht man zum Einwohnermeldeamt oder Bürgeramt.",
+
+"Aufgabe 254: „In Deutschland dürfen Ehepaare sich scheiden lassen. Meistens müssen sie dazu das ‚Trennungsjahr‘ einhalten. Was bedeutet das?“ ; Die Ehegatten führen mindestens ein Jahr getrennt ihr eigenes Leben. Danach ist die Scheidung möglich. Das bedeutet, dass die Partner vor der Scheidung normalerweise ein Jahr getrennt leben müssen.",
+
+"Aufgabe 255: „Bei Erziehungsproblemen können Eltern in Deutschland Hilfe erhalten vom …“ ; Jugendamt. Das bedeutet, dass das Jugendamt Familien unterstützt, wenn es Probleme mit Kindern oder Erziehung gibt.",
+
+"Aufgabe 256: „Ein Ehepaar möchte in Deutschland ein Restaurant eröffnen. Was braucht es dazu unbedingt?“ ; eine Gaststättenerlaubnis von der zuständigen Behörde. Das bedeutet, dass man für ein Restaurant eine offizielle Erlaubnis braucht. Man darf nicht einfach ohne Genehmigung ein Restaurant eröffnen.",
+
+"Aufgabe 257: „Eine erwachsene Frau möchte in Deutschland das Abitur nachholen. Das kann sie an …“ ; einem Abendgymnasium. Das bedeutet, dass Erwachsene dort später noch das Abitur machen können, oft neben der Arbeit oder am Abend.",
+
+"Aufgabe 258: „Was darf das Jugendamt in Deutschland?“ ; Es kann ein Kind, das geschlagen wird oder hungern muss, aus der Familie nehmen. Das bedeutet, dass das Jugendamt Kinder schützen darf, wenn sie in Gefahr sind. Wenn ein Kind Gewalt erlebt oder nicht genug versorgt wird, kann das Jugendamt eingreifen.",
+
+"Aufgabe 259: „Das Berufsinformationszentrum BIZ bei der Bundesagentur für Arbeit in Deutschland hilft bei der …“ ; Lehrstellensuche. Das bedeutet, dass das BIZ Informationen über Berufe, Ausbildung und freie Ausbildungsplätze gibt.",
+
+"Aufgabe 260: „In Deutschland hat ein Kind in der Schule …“ ; Anwesenheitspflicht. Das bedeutet, dass Kinder regelmäßig zur Schule gehen müssen. Sie dürfen nicht einfach ohne Grund zu Hause bleiben.",
+
+"Aufgabe 261: „Ein Mann möchte mit 30 Jahren in Deutschland sein Abitur nachholen. Wo kann er das tun?“ ; an einem Abendgymnasium. Das bedeutet, dass auch Erwachsene später noch das Abitur machen können.",
+
+"Aufgabe 262: „Was bedeutet in Deutschland der Grundsatz der Gleichbehandlung?“ ; Niemand darf zum Beispiel wegen einer Behinderung benachteiligt werden. Das bedeutet, dass Menschen fair behandelt werden müssen. Niemand darf wegen persönlicher Merkmale schlechter behandelt werden.",
+
+"Aufgabe 263: „In Deutschland sind Jugendliche ab 14 Jahren strafmündig. Das bedeutet: Jugendliche, die 14 Jahre und älter sind und gegen Strafgesetze verstoßen, …“ ; werden bestraft. Das bedeutet, dass Jugendliche ab 14 Jahren für Straftaten verantwortlich gemacht werden können. Sie werden aber nicht genau wie Erwachsene behandelt.",
+
+"Aufgabe 264: „Zu welchem Fest tragen Menschen in Deutschland bunte Kostüme und Masken?“ ; am Rosenmontag. Das bedeutet, dass viele Menschen im Karneval oder Fasching Kostüme tragen. Rosenmontag ist ein wichtiger Tag in dieser Zeit.",
+
+"Aufgabe 265: „Wohin muss man in Deutschland zuerst gehen, wenn man heiraten möchte?“ ; zum Standesamt. Das bedeutet, dass eine Ehe in Deutschland offiziell beim Standesamt geschlossen wird.",
+
+"Aufgabe 266: „Wann beginnt die gesetzliche Nachtruhe in Deutschland?“ ; um 22 Uhr. Das bedeutet, dass man ab 22 Uhr besonders leise sein soll, damit andere Menschen schlafen und sich erholen können.",
+
+"Aufgabe 267: „Eine junge Frau in Deutschland, 22 Jahre alt, lebt mit ihrem Freund zusammen. Die Eltern der Frau finden das nicht gut, weil ihnen der Freund nicht gefällt. Was können die Eltern tun?“ ; Sie müssen die Entscheidung der volljährigen Tochter respektieren. Das bedeutet, dass eine erwachsene Frau selbst entscheiden darf, mit wem sie zusammenlebt. Die Eltern dürfen sie nicht zwingen.",
+
+"Aufgabe 268: „Eine junge Frau will den Führerschein machen. Sie hat Angst vor der Prüfung, weil ihre Muttersprache nicht Deutsch ist. Was ist richtig?“ ; Sie kann die Theorie-Prüfung vielleicht in ihrer Muttersprache machen. Es gibt mehr als zehn Sprachen zur Auswahl. Das bedeutet, dass die theoretische Führerscheinprüfung in Deutschland in mehreren Sprachen möglich sein kann.",
+
+"Aufgabe 269: „In Deutschland haben Kinder ab dem Alter von drei Jahren bis zur Ersteinschulung einen Anspruch auf …“ ; einen Kindergartenplatz. Das bedeutet, dass Kinder in diesem Alter grundsätzlich das Recht auf einen Platz im Kindergarten haben.",
+
+"Aufgabe 270: „Die Volkshochschule in Deutschland ist eine Einrichtung …“ ; zur Weiterbildung. Das bedeutet, dass Erwachsene dort Kurse besuchen können, zum Beispiel für Sprachen, Beruf, Computer oder andere Themen.",
+
+"Aufgabe 271: „Was ist in Deutschland ein Brauch zu Weihnachten?“ ; einen Tannenbaum schmücken. Das bedeutet, dass viele Menschen zu Weihnachten einen Baum aufstellen und ihn mit Lichtern und Schmuck dekorieren.",
+
+"Aufgabe 272: „Welche Lebensform ist in Deutschland nicht erlaubt?“ ; Ein Mann ist mit zwei Frauen zur selben Zeit verheiratet. Das bedeutet, dass man in Deutschland nicht gleichzeitig mit mehreren Personen verheiratet sein darf.",
+
+"Aufgabe 273: „Bei Erziehungsproblemen gehen Sie in Deutschland …“ ; zum Jugendamt. Das bedeutet, dass das Jugendamt Familien beraten und unterstützen kann, wenn es Probleme mit Kindern oder Erziehung gibt.",
+
+"Aufgabe 274: „Sie haben in Deutschland absichtlich einen Brief geöffnet, der an eine andere Person adressiert ist. Was haben Sie nicht beachtet?“ ; das Briefgeheimnis. Das bedeutet, dass Briefe privat sind. Man darf einen Brief, der an eine andere Person gerichtet ist, nicht einfach öffnen.",
+
+"Aufgabe 275: „Was braucht man in Deutschland für eine Ehescheidung?“ ; die Unterstützung einer Anwältin/eines Anwalts. Das bedeutet, dass eine Scheidung in Deutschland über das Gericht läuft und man dafür normalerweise anwaltliche Hilfe braucht.",
+
+"Aufgabe 276: „Was sollten Sie tun, wenn Sie von Ihrer Ansprechpartnerin/Ihrem Ansprechpartner in einer deutschen Behörde schlecht behandelt werden?“ ; Ich kann mich bei der Behördenleiterin/beim Behördenleiter beschweren. Das bedeutet, dass man sich nicht alles gefallen lassen muss. Man kann sich offiziell beschweren, wenn man schlecht behandelt wird.",
+
+"Aufgabe 277: „Eine Frau, die ein zweijähriges Kind hat, bewirbt sich in Deutschland um eine Stelle. Was ist ein Beispiel für Diskriminierung? Sie bekommt die Stelle nur deshalb nicht, weil sie …“ ; Mutter ist. Das bedeutet, dass eine Frau nicht schlechter behandelt werden darf, nur weil sie ein Kind hat. Wenn sie die Stelle nur wegen ihrer Mutterschaft nicht bekommt, ist das Diskriminierung.",
+
+"Aufgabe 278: „Ein Mann im Rollstuhl hat sich auf eine Stelle als Buchhalter beworben. Was ist ein Beispiel für Diskriminierung? Er bekommt die Stelle nur deshalb nicht, weil er …“ ; im Rollstuhl sitzt. Das bedeutet, dass ein Mensch nicht schlechter behandelt werden darf, nur weil er eine Behinderung hat. Wenn er die Arbeit machen kann, darf der Rollstuhl kein Grund für eine Ablehnung sein.",
+
+"Aufgabe 279: „In den meisten Mietshäusern in Deutschland gibt es eine ‚Hausordnung‘. Was steht in einer solchen ‚Hausordnung‘?“ ; Regeln, an die sich alle Bewohnerinnen und Bewohner halten müssen. Das bedeutet, dass in einer Hausordnung zum Beispiel Regeln zu Ruhezeiten, Müll, Treppenhaus oder gemeinsamer Nutzung stehen können.",
+
+"Aufgabe 280: „Wenn Sie sich in Deutschland gegen einen falschen Steuerbescheid wehren wollen, müssen Sie …“ ; Einspruch einlegen. Das bedeutet, dass man offiziell sagen kann, dass man mit dem Steuerbescheid nicht einverstanden ist. Man darf den Bescheid nicht einfach wegwerfen, sondern muss rechtzeitig Einspruch einlegen.",
+
+"Aufgabe 281: „Zwei Freunde wollen in ein öffentliches Schwimmbad in Deutschland. Beide haben eine dunkle Hautfarbe und werden deshalb nicht hineingelassen. Welches Recht wird in dieser Situation verletzt?“ ; das Recht auf Gleichbehandlung. Das bedeutet, dass Menschen nicht wegen ihrer Hautfarbe schlechter behandelt werden dürfen. Alle Menschen müssen fair und gleich behandelt werden.",
+
+"Aufgabe 282: „Welches Ehrenamt müssen deutsche Staatsbürgerinnen und Staatsbürger übernehmen, wenn sie dazu aufgefordert werden?“ ; Wahlhelferin/Wahlhelfer. Das bedeutet, dass deutsche Staatsbürgerinnen und Staatsbürger bei Wahlen helfen müssen, wenn sie dafür offiziell ausgewählt werden. Wahlhelferinnen und Wahlhelfer helfen zum Beispiel beim Ablauf der Wahl und beim Zählen der Stimmen.",
+
+"Aufgabe 283: „Was tun Sie, wenn Sie eine falsche Rechnung von einer deutschen Behörde bekommen?“ ; Ich lege Widerspruch bei der Behörde ein. Das bedeutet, dass man der Behörde offiziell mitteilt, dass die Rechnung falsch ist. Man soll die Rechnung nicht einfach liegen lassen oder wegwerfen.",
+
+"Aufgabe 284: „Was man für die Arbeit können muss, ändert sich in Zukunft sehr schnell. Was kann man tun?“ ; Erwachsene müssen auch nach der Ausbildung immer weiter lernen. Das bedeutet, dass Lernen nicht nach Schule oder Ausbildung endet. Im Beruf ändern sich Technik, Regeln und Aufgaben, deshalb ist Weiterbildung wichtig.",
+
+"Aufgabe 285: „Frau Frost arbeitet als fest angestellte Mitarbeiterin in einem Büro. Was muss sie nicht von ihrem Gehalt bezahlen?“ ; Umsatzsteuer. Das bedeutet, dass Angestellte von ihrem Gehalt zum Beispiel Lohnsteuer und Sozialversicherungsbeiträge zahlen. Umsatzsteuer zahlt man aber normalerweise beim Kauf von Waren und Dienstleistungen, nicht direkt vom Gehalt.",
+
+"Aufgabe 286: „Welche Organisation in einer Firma hilft den Arbeitnehmerinnen und Arbeitnehmern bei Problemen mit der Arbeitgeberin/dem Arbeitgeber?“ ; der Betriebsrat. Das bedeutet, dass der Betriebsrat die Interessen der Beschäftigten in einer Firma vertritt. Er kann helfen, wenn es Probleme mit der Arbeitgeberin oder dem Arbeitgeber gibt.",
+
+"Aufgabe 287: „Sie möchten bei einer Firma in Deutschland Ihr Arbeitsverhältnis beenden. Was müssen Sie beachten?“ ; die Kündigungsfrist. Das bedeutet, dass man nicht immer sofort mit der Arbeit aufhören kann. Im Arbeitsvertrag oder im Gesetz steht oft, wie lange vorher man kündigen muss.",
+
+"Aufgabe 288: „Woraus begründet sich Deutschlands besondere Verantwortung für Israel?“ ; aus den nationalsozialistischen Verbrechen gegen Juden. Das bedeutet, dass Deutschland wegen der Verbrechen im Nationalsozialismus eine besondere historische Verantwortung gegenüber Jüdinnen, Juden und dem Staat Israel hat.",
+
+"Aufgabe 289: „Ein Mann mit dunkler Hautfarbe bewirbt sich um eine Stelle als Kellner in einem Restaurant in Deutschland. Was ist ein Beispiel für Diskriminierung? Er bekommt die Stelle nur deshalb nicht, weil …“ ; er eine dunkle Haut hat. Das bedeutet, dass ein Mensch nicht wegen seiner Hautfarbe schlechter behandelt werden darf. Wenn er nur deshalb die Stelle nicht bekommt, ist das Diskriminierung.",
+
+"Aufgabe 290: „Sie haben in Deutschland einen Fernseher gekauft. Zu Hause packen Sie den Fernseher aus, doch er funktioniert nicht. Der Fernseher ist kaputt. Was können Sie machen?“ ; den Fernseher reklamieren. Das bedeutet, dass man dem Geschäft sagen kann, dass das Gerät kaputt ist. Dann kann man zum Beispiel Reparatur, Ersatz oder eine andere Lösung verlangen.",
+
+"Aufgabe 291: „Warum muss man in Deutschland bei der Steuererklärung aufschreiben, ob man zu einer Kirche gehört oder nicht?“ ; weil es eine Kirchensteuer gibt, die an die Einkommen- und Lohnsteuer geknüpft ist. Das bedeutet, dass manche Kirchenmitglieder Kirchensteuer zahlen. Deshalb ist diese Information für die Steuer wichtig.",
+
+"Aufgabe 292: „Die Menschen in Deutschland leben nach dem Grundsatz der religiösen Toleranz. Was bedeutet das?“ ; Jeder kann glauben, was er möchte. Das bedeutet, dass Menschen in Deutschland frei entscheiden dürfen, welche Religion sie haben oder ob sie keine Religion haben. Der Staat schreibt keine Religion vor.",
+
+"Aufgabe 293: „Was ist in Deutschland ein Brauch zu Ostern?“ ; Eier bemalen. Das bedeutet, dass viele Menschen zu Ostern Eier färben oder bemalen. Das ist ein bekannter Osterbrauch in Deutschland.",
+
+"Aufgabe 294: „Pfingsten ist ein …“ ; christlicher Feiertag. Das bedeutet, dass Pfingsten aus der christlichen Tradition kommt. Es ist in Deutschland ein Feiertag mit religiöser Bedeutung.",
+
+"Aufgabe 295: „Welche Religion hat die europäische und deutsche Kultur geprägt?“ ; das Christentum. Das bedeutet, dass viele Traditionen, Feiertage, Kirchen und Werte in Europa und Deutschland historisch stark vom Christentum beeinflusst wurden.",
+
+"Aufgabe 296: „In Deutschland nennt man die letzten vier Wochen vor Weihnachten …“ ; die Adventszeit. Das bedeutet, dass die Wochen vor Weihnachten Advent heißen. Viele Menschen zünden dann Adventskerzen an oder benutzen einen Adventskalender.",
+
+"Aufgabe 297: „Aus welchem Land sind die meisten Migrantinnen und Migranten nach Deutschland gekommen?“ ; Türkei. Das bedeutet, dass viele Menschen mit Migrationsgeschichte in Deutschland türkische Wurzeln haben.",
+
+"Aufgabe 298: „In der DDR lebten vor allem Migrantinnen und Migranten aus …“ ; Vietnam, Polen, Mosambik. Das bedeutet, dass viele ausländische Arbeitskräfte und Migrantinnen und Migranten in der DDR aus diesen Ländern kamen.",
+
+"Aufgabe 299: „Ausländische Arbeitnehmerinnen und Arbeitnehmer, die in den 50er und 60er Jahren von der Bundesrepublik Deutschland angeworben wurden, nannte man …“ ; Gastarbeiterinnen/Gastarbeiter. Das bedeutet, dass Deutschland damals Arbeitskräfte aus anderen Ländern angeworben hat. Diese Menschen wurden Gastarbeiterinnen und Gastarbeiter genannt.",
+
+"Aufgabe 300: „Aus welchem Land kamen die ersten Gastarbeiterinnen und Gastarbeiter in die Bundesrepublik Deutschland?“ ; Italien. Das bedeutet, dass die ersten angeworbenen Gastarbeiterinnen und Gastarbeiter in die Bundesrepublik Deutschland aus Italien kamen.",
+
+"Aufgabe 1: „Welches Wappen gehört zum Freistaat Bayern?“ ; Bild 2. Das bedeutet, dass man bei dieser Frage das Bild mit dem bayerischen Wappen wählen muss. Das bayerische Wappen erkennt man oft an den weiß-blauen Rauten und an anderen Symbolen für Bayern.",
+
+"Aufgabe 2: „Welches ist ein Landkreis in Bayern?“ ; Altötting. Das bedeutet, dass Altötting ein Landkreis in Bayern ist. Die anderen Orte gehören nicht als Landkreis zu Bayern.",
+
+"Aufgabe 3: „Für wie viele Jahre wird der Landtag in Bayern gewählt?“ ; 5. Das bedeutet, dass die Bürgerinnen und Bürger in Bayern den Landtag für fünf Jahre wählen. Danach gibt es wieder eine Landtagswahl.",
+
+"Aufgabe 4: „Ab welchem Alter darf man in Bayern bei Kommunalwahlen wählen?“ ; 18. Das bedeutet, dass man in Bayern bei Kommunalwahlen ab 18 Jahren wählen darf.",
+
+"Aufgabe 5: „Welche Farben hat die Landesflagge von Bayern?“ ; weiß-blau. Das bedeutet, dass die bayerische Landesflagge die Farben Weiß und Blau hat. Diese Farben sieht man auch oft bei bayerischen Symbolen.",
+
+"Aufgabe 6: „Wo können Sie sich in Bayern über politische Themen informieren?“ ; bei der Landeszentrale für politische Bildung. Das bedeutet, dass diese Stelle Informationen über Politik, Demokratie und Gesellschaft anbietet. Dort kann man politische Bildung bekommen.",
+
+"Aufgabe 7: „Die Landeshauptstadt von Bayern heißt …“ ; München. Das bedeutet, dass München die Hauptstadt des Bundeslandes Bayern ist. Dort sitzt auch die bayerische Landesregierung.",
+
+"Aufgabe 8: „Welches Bundesland ist Bayern?“ ; Bild 4. Das bedeutet, dass man auf der Karte das Bild wählen muss, das Bayern zeigt. Bayern liegt im Südosten von Deutschland.",
+
+"Aufgabe 9: „Wie nennt man die Regierungschefin/den Regierungschef in Bayern?“ ; Ministerpräsidentin/Ministerpräsident. Das bedeutet, dass die Chefin oder der Chef der bayerischen Landesregierung Ministerpräsidentin oder Ministerpräsident heißt.",
+
+"Aufgabe 10: „Welche Ministerin/welchen Minister hat Bayern nicht?“ ; Außenministerin/Außenminister. Das bedeutet, dass Bayern eigene Ministerien hat, zum Beispiel für Justiz, Finanzen oder Inneres. Außenpolitik ist aber Aufgabe des Bundes, nicht eines Bundeslandes."
 ];
 
 const synth = window.speechSynthesis;
